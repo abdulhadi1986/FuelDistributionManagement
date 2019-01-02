@@ -27,7 +27,7 @@ public abstract class User {
 	private String mobileNo;
 	private String userName;
 	private String password;
-	
+		
 	public String getNationalNo() {
 		return nationalNo;
 	}
@@ -71,6 +71,10 @@ public abstract class User {
 	}
 	public void setPassword(String password) {
 		this.password = password; 
+	}
+	
+	public String getRole() {
+		return this.getRole();
 	}
 	
 

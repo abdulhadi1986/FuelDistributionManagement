@@ -1,21 +1,14 @@
 package com.abulzahab.FuelDistributionManagement;
 
-import java.util.Date;
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.abulzahab.FuelDistributionManagement.dao.AddressRepo;
 import com.abulzahab.FuelDistributionManagement.dao.RequestRepo;
 import com.abulzahab.FuelDistributionManagement.dao.StationRepo;
@@ -25,21 +18,13 @@ import com.abulzahab.FuelDistributionManagement.model.Citizen;
 import com.abulzahab.FuelDistributionManagement.model.FuelRequest;
 import com.abulzahab.FuelDistributionManagement.model.FuelStation;
 import com.abulzahab.FuelDistributionManagement.model.Operator;
-import com.abulzahab.FuelDistributionManagement.model.User;
 import com.abulzahab.FuelDistributionManagement.services.AdminServices;
 import com.abulzahab.FuelDistributionManagement.services.CitizenServices;
 
-import net.bytebuddy.dynamic.DynamicType.Builder.FieldDefinition.Optional;
-
-
-
 @Controller
 public class ApplicationController {
-	
 		
 	private Citizen user = new Citizen();
-	
-	
 	
 	@Autowired
 	private UserRepo userRepo;
@@ -123,6 +108,7 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 	
 	fuelRequest.setSubmittedBy(user);
 	userRepo.save(user);
+	
 	if (citizenService.submitFuelRequest(fuelRequest)) {
 		model.addAttribute("name", fuelRequest);
 		
@@ -131,7 +117,6 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 		return "error"; 
 	}
 }
-
 
 @RequestMapping (value ="/addoperator", method = RequestMethod.GET)
 public String ShowFormOperator (Model model) {

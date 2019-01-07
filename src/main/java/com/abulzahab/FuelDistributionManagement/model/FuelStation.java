@@ -78,7 +78,7 @@ public class FuelStation {
 	}
 	@Override
 	public String toString() {
-		return "FuelStation [stationName=" + stationName + "]";
+		return stationName;
 	}
 
 

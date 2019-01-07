@@ -1,6 +1,8 @@
 package com.abulzahab.FuelDistributionManagement.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +27,7 @@ public class FuelRequest {
 	@JoinColumn(name="FUEL_STATION_ID")
 	private FuelStation fuelStation;
 	
-	private LocalDate submitionDate ;
+	private LocalDateTime submitionDate ;
 	
 	//this is the date format on the web page
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -40,7 +42,7 @@ public class FuelRequest {
 	private Operator approvedBy;
 	
 	private String status;
-	private boolean approved;
+	private LocalDate approvalDate;
 	private String comments;
 	
 	@ManyToOne
@@ -63,6 +65,22 @@ public class FuelRequest {
 		this.amount = amount;
 	}
 
+	public LocalDateTime getSubmitionDate() {
+		return submitionDate;
+	}
+
+	public void setSubmitionDate(LocalDateTime submitionDate) {
+		this.submitionDate = submitionDate;
+	}
+
+	public LocalDate getApprovalDate() {
+		return approvalDate;
+	}
+
+	public void setApprovalDate(LocalDate approvalDate) {
+		this.approvalDate = approvalDate;
+	}
+
 	public FuelStation getFuelStation() {
 		return fuelStation;
 	}
@@ -71,20 +89,12 @@ public class FuelRequest {
 		this.fuelStation = fuelStation;
 	}
 
-	public LocalDate getSubmitionDate() {
-		return submitionDate;
-	}
-
-	public void setSubmitionDate(LocalDate submitionDate) {
-		this.submitionDate = submitionDate;
-	}
-
 	public LocalDate getPreferedDeliveryDate() {
 		return preferedDeliveryDate;
 	}
 
 	public void setPreferedDeliveryDate(LocalDate preferedDeliveryDate) {
-		this.preferedDeliveryDate = preferedDeliveryDate;
+		this.preferedDeliveryDate = preferedDeliveryDate.plusDays(1);
 	}
 
 	public Citizen getSubmittedBy() {
@@ -111,13 +121,7 @@ public class FuelRequest {
 		this.status = status;
 	}
 
-	public boolean isApproved() {
-		return approved;
-	}
-
-	public void setApproved(boolean approved) {
-		this.approved = approved;
-	}
+	
 
 	public String getComments() {
 		return comments;
@@ -137,8 +141,7 @@ public class FuelRequest {
 
 	@Override
 	public String toString() {
-		return "FuelRequest [amount=" + amount + ", fuelStation=" + fuelStation + ", submitionDate=" + submitionDate
-				+ "]";
+		return "Submitted On: " + submitionDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " \n" +amount+" L"+ ", Station: " + fuelStation +", prefered date: " + preferedDeliveryDate;
 	}
 	
 	

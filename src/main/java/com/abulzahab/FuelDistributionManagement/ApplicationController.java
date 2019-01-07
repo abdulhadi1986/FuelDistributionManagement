@@ -45,7 +45,7 @@ public class ApplicationController {
 	private RequestRepo requestRepo;
 	
 @RequestMapping (value ="/register", method = RequestMethod.GET)
-public String showForm(Model model) {
+public String registerationForm(Model model) {
 	//get the list of available addresses
 	List<Address> addresses = addressRepo.findAll();
 	model.addAttribute("addresses", addresses);
@@ -59,7 +59,7 @@ public String showForm(Model model) {
 }
 
 @RequestMapping (value="/addCitizen" , method = RequestMethod.POST)
-public String showUser(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
+public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
 		//if there is error in the input then return the form again but all the filled data must stay
 		if (bindingResult.hasErrors()) {
 			//return again list of available addresses 
@@ -80,6 +80,42 @@ public String showUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRe
 	
 }
 
+@RequestMapping (value ="/profile", method = RequestMethod.GET)
+public String editCitizenProfile(Model model) {
+	//get the list of available addresses
+	List<Address> addresses = addressRepo.findAll();
+	model.addAttribute("addresses", addresses);
+	
+	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
+	if (currentUser.isPresent()) {
+		user = currentUser.get();
+	}
+	model.addAttribute("citizen",user);
+	return "profile";
+}
+
+
+@RequestMapping (value="/savecitizenprofile" , method = RequestMethod.POST)
+public String editUser(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
+		//if there is error in the input then return the form again but all the filled data must stay
+		if (bindingResult.hasErrors()) {
+			//return again list of available addresses 
+			List<Address> addresses = addressRepo.findAll();
+			model.addAttribute("addresses", addresses);
+			//return the filled fields in the form so the user doesn't have to fill in again
+			model.addAttribute("citizen",citizen);
+			return "registration";
+		}
+	
+		if (citizenService.createCitizen(citizen)) {	
+				model.addAttribute("citizen", citizen);
+				if (!bindingResult.hasErrors())
+					return "citizenhome";
+		}		
+	return "success";
+	
+	
+}
 
 @RequestMapping (value= {"/","/home"}, method = RequestMethod.GET)
 public String showCitizenHome(Model model) {

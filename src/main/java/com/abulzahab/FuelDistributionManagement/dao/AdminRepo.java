@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.abulzahab.FuelDistributionManagement.model.Operator;
 
 public interface AdminRepo extends JpaRepository<Operator, String> {
+<<<<<<< HEAD
 	
+=======
+>>>>>>> branch 'Wael' of https://github.com/abdulhadi1986/FuelDistributionManagement.git
 
 }

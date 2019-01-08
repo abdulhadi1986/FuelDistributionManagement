@@ -78,7 +78,11 @@ public class FuelStation {
 	}
 	@Override
 	public String toString() {
+<<<<<<< HEAD
 		return "FuelStation [stationName=" + stationName + "]";
+=======
+		return stationName;
+>>>>>>> branch 'Wael' of https://github.com/abdulhadi1986/FuelDistributionManagement.git
 	}
 
 

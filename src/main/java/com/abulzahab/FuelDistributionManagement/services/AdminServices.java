@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.abulzahab.FuelDistributionManagement.dao.AdminRepo;
+<<<<<<< HEAD
 import com.abulzahab.FuelDistributionManagement.dao.StationRepo;
 import com.abulzahab.FuelDistributionManagement.dao.VehicleRepo;
 import com.abulzahab.FuelDistributionManagement.model.DistributionVehicle;
@@ -53,3 +54,24 @@ public class AdminServices {
 	}
 } // main
 	
+=======
+import com.abulzahab.FuelDistributionManagement.model.Operator;
+
+@Component
+public class AdminServices {
+	
+	@Autowired
+	private AdminRepo adminRepo;
+	
+	public boolean addOperator(Operator operator) {
+		if (!adminRepo.existsById(operator.getNationalNo())) {
+			adminRepo.save(operator);
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
+
+}
+>>>>>>> branch 'Wael' of https://github.com/abdulhadi1986/FuelDistributionManagement.git

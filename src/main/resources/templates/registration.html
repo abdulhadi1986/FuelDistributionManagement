@@ -5,6 +5,7 @@
   <title>Registration Form New Citizen</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
     crossorigin="anonymous">
+<<<<<<< HEAD
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -85,3 +86,79 @@
   </form>
 </body>
 </html>
+=======
+</head>
+
+<body>
+  <br />
+
+  <form action="#" th:action="@{/addCitizen}" name = "citizen" th:object="${citizen}" method="post">
+    <div class="form-col col-md-10">
+      <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h2 class="text-info">Registration Form</h2>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="firstName">First Name</label> 
+          <input type="text" class="form-control" placeholder="First Name" th:field="*{firstName}" id="firstName" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="inputAddress">Last Name</label> 
+          <input type="text" class="form-control" name="lastName" placeholder="Last Name" th:field="*{lastName}" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="nationalNo">National No.</label> 
+          <input type="text" class="form-control" name="nationalNo" th:field="*{nationalNo}" placeholder="National No." required>
+          <small class="form-text text-muted">You will user it as your user name to login</small>
+          <span class ="text-danger" th:errors="*{nationalNo}"></span>
+        </div> 
+        <div class="form-group col-md-6"> 
+          <label for="identityNo">Identity Card No.</label> 
+          <input type="text" class="form-control" name="identityNo" th:field= "*{identityNo}" placeholder="ID Card No." required> 
+          <small class="form-text text-muted">You will use it as your password</small>
+        </div>
+      </div>  
+      <div class="form-row">
+        <div class="form-group col-md-6">
+        <label for="exampleInputEmail1">Email address</label> 
+        <input type="email" class="form-control" name="email" th:field="*{email}"  aria-describedby="emailHelp" placeholder="Enter email" required>
+        <span class="text-danger" th:errors="*{email}"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="mobileNo">Mobile No.</label> 
+            <input type="text" class="form-control" name="mobileNo" th:field="*{mobileNo}" aria-describedby="emailHelp" placeholder="+963">
+            <small class="form-text text-muted">You might be contacted by the driver for the exact location</small>
+        </div>
+      </div>
+
+        <label th:for="street">Address Info.</label>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <input type="text" class="form-control" name="street" th:field="*{street}" placeholder="Street name">
+          </div>
+          <div class="form-group col-md-6">
+            <input type="text" class="form-control" name="building" th:field="*{building}" placeholder="Building">
+          </div>
+          <div class="form-group col-md-6">
+            <select class="form-control" name="cityAddress" th:field="*{cityAddress}" required>
+              <option value="0">select city</option>
+              <option th:each="address : ${addresses}" th:value="${address.addressId}" th:text="${address.city+' - ' + address.area}"></option>
+            </select>
+            <span class="text-danger" th:errors="*{cityAddress}"></span>
+            <small id="emailHelp" class="form-text text-muted">Please choose the nearest location</small>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-info">Register</button>
+		<a class="btn btn-secondary" href="/home">Cancel</a>
+      </div>
+  </form>
+  
+   
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>  
+</body>
+</html>
+>>>>>>> branch 'Wael' of https://github.com/abdulhadi1986/FuelDistributionManagement.git

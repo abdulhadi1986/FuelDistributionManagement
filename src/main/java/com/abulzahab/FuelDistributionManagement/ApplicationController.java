@@ -76,7 +76,7 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 					return "success";
 		}		
 	return "success";
-	
+  	
 	
 }
 

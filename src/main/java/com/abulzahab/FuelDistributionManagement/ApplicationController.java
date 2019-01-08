@@ -69,7 +69,7 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 			model.addAttribute("citizen",citizen);
 			return "registration";
 		}
-	
+	 
 		if (citizenService.createCitizen(citizen)) {	
 				model.addAttribute("citizen", citizen);
 				if (!bindingResult.hasErrors())

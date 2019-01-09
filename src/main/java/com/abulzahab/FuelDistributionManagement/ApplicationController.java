@@ -60,8 +60,9 @@ public String registerationForm(Model model) {
 
 @RequestMapping (value="/addCitizen" , method = RequestMethod.POST)
 public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
-		//if there is error in the input then return the form again but all the filled data must stay
-		if (bindingResult.hasErrors()) {
+	
+	//if there is error in the input then return the form again but all the filled data must stay
+	if (bindingResult.hasErrors()) {
 			//return again list of available addresses 
 			List<Address> addresses = addressRepo.findAll();
 			model.addAttribute("addresses", addresses);
@@ -70,6 +71,10 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 			return "registration";
 		}
 	 
+	    //check if the user already exists
+	 	if (userRepo.existsById(citizen.getNationalNo()))
+	 		return "userexists";
+	 	
 		if (citizenService.createCitizen(citizen)) {	
 				model.addAttribute("citizen", citizen);
 				if (!bindingResult.hasErrors())
@@ -81,7 +86,7 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 }
 
 @RequestMapping (value ="/profile", method = RequestMethod.GET)
-public String editCitizenProfile(Model model) {
+public String getCitizenProfile(Model model) {
 	//get the list of available addresses
 	List<Address> addresses = addressRepo.findAll();
 	model.addAttribute("addresses", addresses);
@@ -96,7 +101,7 @@ public String editCitizenProfile(Model model) {
 
 
 @RequestMapping (value="/savecitizenprofile" , method = RequestMethod.POST)
-public String editUser(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
+public String editCitizenProfile(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
 		//if there is error in the input then return the form again but all the filled data must stay
 		if (bindingResult.hasErrors()) {
 			//return again list of available addresses 

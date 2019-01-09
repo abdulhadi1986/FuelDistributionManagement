@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymeleaf.org">
+<head>
+  <meta charset="ISO-8859-1" />
+  <title> Add Operator</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNav">
+		<ul class="navbar-nav">
+		  <li class="nav-item">
+			<a class="nav-link" href="/home">Home</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/addadmin">Admins</a>
+		  </li>
+		  <li class="nav-item active">
+			<a class="nav-link active" href="/addoperator">Operators<span class="sr-only">(current)</span></a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/addstation">Stations</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/addvehicle">Vehicles</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/adminreports">Reports</a>
+		  </li>
+		</ul>
+	  </div>
+	  <a class="navbar-link text-light disabled" href="#">Sign Out</a>
+	</nav>
+  <br />
+
+  <form action="#" th:action="@{/addoperator}" name = "operator" method="post">
+    <div class="form-col col-md-10">
+      <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h2 class="text-info">Add New Operator</h2>
+      </div>
+	  <div class="form-row">
+      </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-4">
+			<label for="inputNationalNo">National No.</label> 
+			<input type="text" class="form-control" name="nationalNo" placeholder="National No.">
+		</div>
+        <div class="form-group col-md-4">
+          <label for="inputFirstName">First Name</label> 
+          <input type="text" class="form-control" name="firstName" placeholder="First Name">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="inputLastName">Last Name</label> 
+          <input type="text" class="form-control" name="lastName" placeholder="Last Name">
+        </div>
+      </div>
+      
+	  <div class="form-row">
+		  <div class="form-group col-md-6">
+			<label for="inputEmail">Email address</label> 
+			<input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+		  </div>
+		  <div class="form-group col-md-6">
+			  <label for="inputMobileNo">Mobile No.</label> 
+			  <input type="text" class="form-control" name="mobileNo" aria-describedby="emailHelp" placeholder="+963">
+		  </div>  
+	  </div>
+	  <div class="form-row">
+        <div class="form-group col-md-6">
+          	<label for="inputUsername">Username </label> 
+			<input type="text" class="form-control" name="username" aria-describedby="emailHelp" placeholder="Username.." required>
+		</div>
+		<div class="form-group col-md-6">
+            <label for="inputPassword">password </label> 
+			<input type="text" class="form-control" name="password" aria-describedby="emailHelp" placeholder="password.." required>
+        </div>
+	  </div>
+	  <div class="form-row">
+		  <div class="form-group col-md-6">
+		  <label for="inputFuelStation"> Select Station </label>
+            <select class="form-control" name="fuelStation" required>
+              <option value="0">select station</option>
+              <option th:each="station : ${stations}" th:value="${station.stationId}" th:text="${station.stationName}"></option>
+            </select>
+            <small id="emailHelp" class="form-text text-muted">Please choose the nearest location</small>
+          </div>
+	  </div>
+        <button type="submit" class="btn btn-info">Register</button>
+		<a class="btn btn-secondary" href="/home">Cancel</a>
+      </div>
+    </div>
+  </form>
+    
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>  
+</body>
+</html>

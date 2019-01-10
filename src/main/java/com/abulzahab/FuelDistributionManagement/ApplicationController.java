@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import com.abulzahab.FuelDistributionManagement.dao.AddressRepo;
 import com.abulzahab.FuelDistributionManagement.dao.RequestRepo;
 import com.abulzahab.FuelDistributionManagement.dao.StationRepo;
@@ -22,6 +21,7 @@ import com.abulzahab.FuelDistributionManagement.model.FuelStation;
 import com.abulzahab.FuelDistributionManagement.model.Operator;
 import com.abulzahab.FuelDistributionManagement.services.AdminServices;
 import com.abulzahab.FuelDistributionManagement.services.CitizenServices;
+
 
 @Controller
 public class ApplicationController {
@@ -196,7 +196,6 @@ public String getManageStations(Model model, @RequestParam(value="stationId", re
 @RequestMapping (value="/addstation", method= RequestMethod.POST)
 public String saveStation(FuelStation fuelStation) {
 	stationRepo.save(fuelStation);
-	
 	return "redirect:/addstation";
 }
 
@@ -206,6 +205,12 @@ public String deleteStations(Model model, @RequestParam(value="stationId", requi
 		stationRepo.deleteById(stationId);
 	}  
 	return "redirect:/addstation";
+}
+
+@RequestMapping (value="/adminreports" , method = RequestMethod.GET)
+public String getAdminReports(Model model) {
+	
+	return "adminreports"; 
 }
 
 }//main

@@ -204,7 +204,7 @@ public String saveStation(FuelStation fuelStation) {
 public String deleteStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
 	if (stationId != 0) {
 		stationRepo.deleteById(stationId);
-	} 
+	}  
 	return "redirect:/addstation";
 }
 

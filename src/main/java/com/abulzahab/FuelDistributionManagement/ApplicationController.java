@@ -9,6 +9,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.abulzahab.FuelDistributionManagement.dao.AddressRepo;
 import com.abulzahab.FuelDistributionManagement.dao.RequestRepo;
 import com.abulzahab.FuelDistributionManagement.dao.StationRepo;
@@ -72,8 +74,11 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 		}
 	 
 	    //check if the user already exists
-	 	if (userRepo.existsById(citizen.getNationalNo()))
+	 	if (userRepo.existsById(citizen.getNationalNo())) {
+	 		model.addAttribute("citizen",citizen);
 	 		return "userexists";
+	 	}
+	 		
 	 	
 		if (citizenService.createCitizen(citizen)) {	
 				model.addAttribute("citizen", citizen);
@@ -172,6 +177,35 @@ public String addOperator(Operator operator) {
 		return "success";
 	}
 	return "error";
+}
+
+@RequestMapping (value="/addstation" , method = RequestMethod.GET, params= {"stationId"})
+public String getManageStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
+	List<FuelStation> allStations = stationRepo.findAll();
+	model.addAttribute("allStations", allStations);
+	FuelStation fuelStation;
+	if (stationId != 0) {
+		fuelStation = stationRepo.findById(stationId).orElse(new FuelStation());
+	} else 
+		fuelStation = new FuelStation(); 
+	model.addAttribute("fuelStation", fuelStation);
+	
+	return "addstation";
+}
+
+@RequestMapping (value="/addstation", method= RequestMethod.POST)
+public String saveStation(FuelStation fuelStation) {
+	stationRepo.save(fuelStation);
+	
+	return "redirect:/addstation";
+}
+
+@RequestMapping (value="/delstation" , method = RequestMethod.GET, params= {"stationId"})
+public String deleteStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
+	if (stationId != 0) {
+		stationRepo.deleteById(stationId);
+	} 
+	return "redirect:/addstation";
 }
 
 }//main

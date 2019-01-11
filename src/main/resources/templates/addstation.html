@@ -75,7 +75,7 @@
 					<div class="form-row">
 					<div class="form-group col-md-12">
 						<label for="identityNo">Choose the address</label>
-						<select class="form-control" name="cityAddress" required>
+						<select class="form-control" name="cityAddress">
 						  <option value="0">select address</option>
 						  <option th:each="address : ${addresses}" th:value="${address.addressId}" th:text="${address.city+' - ' + address.area}"></option>
 						</select>
@@ -88,7 +88,7 @@
 						</div> 
 						<div class="form-group col-md-6">
 							<label for="identityNo">Operated By</label>
-							<select class="form-control" name="operator" required>
+							<select class="form-control" name="operator" >
 							  <option value="0">select operator</option>
 							  <option th:each="operator : ${operators}" th:value="${operator.nationalNo}" th:text="${operator.firstName+' - ' + operator.lastName}"></option>
 							</select>
@@ -98,7 +98,7 @@
 					<label for="identityNo">Choose the Distribution Vehicles</label>
 					<div class="form-row">
 					  <div class="form-group col-md-12">
-						<select class="form-control" name="distributionVehicles" required multiple>
+						<select class="form-control" name="distributionVehicles" multiple>
 						  <option value="0">select vehicle</option>
 						  <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.plateNo+' - ' + vehicle.tankCapacity}"></option>
 						</select>

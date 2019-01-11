@@ -179,7 +179,7 @@ public String addOperator(Operator operator) {
 	return "error";
 }
  
-@RequestMapping (value="/addstation" , method = RequestMethod.GET, params= {"stationId"})
+@RequestMapping (value="/addstation" , method = RequestMethod.GET)
 public String getManageStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
 	List<FuelStation> allStations = stationRepo.findAll();
 	model.addAttribute("allStations", allStations);

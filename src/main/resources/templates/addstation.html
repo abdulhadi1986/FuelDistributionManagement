@@ -43,15 +43,19 @@
 			<div class="col-md-8 themed-grid-col shadow-sm p-3 bg-light rounded">
 				<div>
 					<h3 class="text-info"> Registered Stations:</h3>
-					<ul class="list-group list-group list-group-flush" th:each="fuelStation : ${allStations}">
-						<li class="list-group-item">
-							<div th:text="${fuelStation}"></div>
+					<ul class="list-group list-group list-group-flush" >
+						<li class="list-group" th:each="fuelStation : ${allStations}">
+							<div class="row">
+								<div th:text="${fuelStation}"></div>
+								<div class="col-md-3"> <a class="btn btn-success" th:href="@{/addstation(stationId=${fuelStation.stationId})}">Edit</a> 
+								- <a class="btn btn-danger" href="@{/delstation(stationId=${fuelStation.stationId})}">Del</a> </div>
+							</div>	
 						</li>
 					</ul>
 				</div>
 			</div>
 			<div class="col-md-4 themed-grid-col shadow-sm p-3 rounded themed-grid-col border border-top-0 border-left-3 border-bottom-0 border-right-0">
-							  <form action="#" th:action="@{/addstation}" name="station" method="post">
+				<form action="#" th:action="@{/addstation}" name="station" th:object="${fuelStation}" method="post">
 				<div class="form-col ">
 				  <div class="shadow-sm p-3 mb-5 bg-white rounded">
 					<h3 class="text-info">Add/Edit Station</h3>
@@ -61,21 +65,21 @@
 					<div class="form-group col-md-6">
 
 					  <label for="firstName">Station Name</label> 
-					  <input type="text" class="form-control" placeholder="Station Name" name="stationName" required>
+					  <input type="text" class="form-control" placeholder="Station Name" th:field="*{stationName}" name="stationName" required>
 					  
 					</div>
 
 					<div class="form-group col-md-6">
 
 					  <label for="inputAddress">Tel No</label> 
-					  <input type="text" class="form-control" placeholder="Tel No" name="telNo" required>
+					  <input type="text" class="form-control" placeholder="Tel No" th:field="*{telNo}" name="telNo" required>
 						
 					</div>
 					</div>
 					<div class="form-row">
 					<div class="form-group col-md-12">
 						<label for="identityNo">Choose the address</label>
-						<select class="form-control" name="cityAddress" required>
+						<select class="form-control" name="cityAddress" th:field="*{cityAddress}"required>
 						  <option value="0">select address</option>
 						  <option th:each="address : ${addresses}" th:value="${address.addressId}" th:text="${address.city+' - ' + address.area}"></option>
 						</select>
@@ -84,11 +88,11 @@
 					<div class="form-row">
 						<div class="form-group col-md-6">
 						  <label for="nationalNo">Tank Capacity</label> 
-						  <input type="text" class="form-control" name="tankCapacity" placeholder="Tank Capacity" required>
+						  <input type="text" class="form-control" name="tankCapacity" th:field="*{tankCapacity}" placeholder="Tank Capacity" required>
 						</div> 
 						<div class="form-group col-md-6">
 							<label for="identityNo">Operated By</label>
-							<select class="form-control" name="operator" required>
+							<select class="form-control" name="operator" th:field="*{operator}" required>
 							  <option value="0">select operator</option>
 							  <option th:each="operator : ${operators}" th:value="${operator.nationalNo}" th:text="${operator.firstName+' - ' + operator.lastName}"></option>
 							</select>
@@ -98,7 +102,7 @@
 					<label for="identityNo">Choose the Distribution Vehicles</label>
 					<div class="form-row">
 					  <div class="form-group col-md-12">
-						<select class="form-control" name="distributionVehicles" required multiple>
+						<select class="form-control" name="distributionVehicles" th:field="*{distributionVehicles}" required multiple>
 						  <option value="0">select vehicle</option>
 						  <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.plateNo+' - ' + vehicle.tankCapacity}"></option>
 						</select>
@@ -107,6 +111,7 @@
 					</div>
 					
 					<button type="submit" class="btn btn-info">Save</button>
+					<button type="reset" class="btn btn-secondary">Reset</button>
 				  </div>
 				</form>
 		   </div>

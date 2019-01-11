@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymeleaf.org">
+<head>
+  <meta charset="ISO-8859-1" />
+  <title> Operations</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">	
+</head>
+
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNav">
+		<ul class="navbar-nav">
+		  <li class="nav-item">
+			<a class="nav-link" href="/home">Home</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/adminreports">Reports</a>
+		  </li>
+		</ul>
+	  </div>
+	  <a class="navbar-link text-light disabled" href="#">Sign Out</a>
+	</nav>
+  <br />
+	<div class="form-col col-md-10">
+		<div class="row">
+			<div class="col-md-8 themed-grid-col shadow-sm p-3 bg-light rounded">
+				<div>
+					<h3 class="text-info"> Pending Requests:</h3>
+					<ul class="list-group list-group-flush" >
+						<li class="list-group" th:each="fuelRequest : ${allFuelReuests}">
+							<div class="row border border-top-0 border-left-0 border-bottom-3 border-right-0">
+								<div class="col-md-8 " th:text="${fuelRequest}"></div>
+								<div class="col-md-3"> <a class="text-success" th:href="@{/operatorhome(requestId=${fuelRequest.requestId})}">Process this Request</a> 
+							<br/>	
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-4 themed-grid-col shadow-sm p-3 rounded themed-grid-col border border-top-0 border-left-3 border-bottom-0 border-right-0">
+				<form action="#" th:action="@{/approverequest}" th:object="${fuelRequest}"  method="post">
+					<div class="form-col ">
+					  <div class="shadow-sm p-3 mb-5 bg-white rounded">
+						<h3 class="text-info">Process Request:</h3>
+					  </div>
+					   <div class="form-row">
+							<div class="form-group col-md-6">
+							  <label for="firstName">Request ID:</label> 
+							  <input type="text" class="form-control" placeholder="submitted On" th:field="*{requestId}" name="requestId" readonly>
+							  <input type="hidden" class="form-control" placeholder="submitted On" th:field="*{fuelStation}" name="fuelStation" readonly>
+							</div>
+							<div class="form-group col-md-6">
+							 	<label for="inputAddress">Amount</label> 
+						  		<input type="text" class="form-control" placeholder="amount" th:field="*{amount}" name="amount">
+							</div>
+					  </div>
+					  <div class="form-row">
+
+						<div class="form-group col-md-6">
+
+						  <label for="firstName">Submitted On:</label> 
+						  <input type="text" class="form-control" placeholder="submitted On" th:field="*{submitionDate}" name="submitionDate" readonly>
+						  
+						</div>
+
+						
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label for="firstName">Submitted By:</label> 
+						  <input type="text" class="form-control" th:field="*{submittedBy}" name="submittedBy" readonly>
+						</div>
+					</div>	
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label for="firstName">Prefered Delivery Date</label> 
+						  <input type="text" class="form-control" th:field="*{preferedDeliveryDate}" name="preferedDeliveryDate" readonly>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label for="firstName">Notes</label> 
+						  <input type="text" class="form-control" th:field="*{comments}" name="comments" readonly>
+						  
+						</div>
+					</div>			
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label for="firstName">Submit On</label> 
+						  <input type="text" class="form-control" th:field="*{approvalDate}" name="approvalDate" readonly>
+						</div>
+					</div>
+					<div class="form-row">
+					<label>Choose Distribution Vehicle:</label>
+						<select class="form-control" name="distributionVehicle" required>
+						  <option value="0">select vehicle</option>
+						  <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.plateNo+' - ' + vehicle.tankCapacity}"></option>
+						</select>	
+					</div>
+					<button type="submit" class="btn btn-info">Save</button>
+					<button type="reset" class="btn btn-secondary">Reset</button>
+				  </div>
+					
+				</form>
+		   </div>
+		</div>
+	</div>
+    
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>  	
+</body>
+</html>

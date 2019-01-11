@@ -20,7 +20,7 @@ public class FuelRequest {
 	
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	private int RequestId;
+	private int requestId;
 	private double amount;
 	
 	@ManyToOne
@@ -50,11 +50,11 @@ public class FuelRequest {
 	private DistributionVehicle distributionVehicle;
 
 	public int getRequestId() {
-		return RequestId;
+		return requestId;
 	}
 
 	public void setRequestId(int requestId) {
-		RequestId = requestId;
+		this.requestId = requestId;
 	}
 
 	public double getAmount() {

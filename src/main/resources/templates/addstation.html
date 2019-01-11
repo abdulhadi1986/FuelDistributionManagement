@@ -46,9 +46,9 @@
 					<ul class="list-group list-group list-group-flush" >
 						<li class="list-group" th:each="fuelStation : ${allStations}">
 							<div class="row">
-								<div th:text="${fuelStation}"></div>
+								<div class="col-md-8 " th:text="${fuelStation}"></div>
 								<div class="col-md-3"> <a class="btn btn-success" th:href="@{/addstation(stationId=${fuelStation.stationId})}">Edit</a> 
-								- <a class="btn btn-danger" href="@{/delstation(stationId=${fuelStation.stationId})}">Del</a> </div>
+								- <a class="btn btn-danger" th:href="@{/delstation(stationId=${fuelStation.stationId})}">Del</a> </div>
 							</div>	
 						</li>
 					</ul>

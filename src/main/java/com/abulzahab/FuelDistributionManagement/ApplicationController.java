@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.abulzahab.FuelDistributionManagement.dao.AddressRepo;
+import com.abulzahab.FuelDistributionManagement.dao.OperatorRepo;
 import com.abulzahab.FuelDistributionManagement.dao.RequestRepo;
 import com.abulzahab.FuelDistributionManagement.dao.StationRepo;
 import com.abulzahab.FuelDistributionManagement.dao.UserRepo;
@@ -45,6 +46,9 @@ public class ApplicationController {
 	
 	@Autowired
 	private RequestRepo requestRepo;
+	
+	@Autowired
+	private OperatorRepo operatorRepo;
 	
 @RequestMapping (value ="/register", method = RequestMethod.GET)
 public String registerationForm(Model model) {
@@ -164,19 +168,35 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 	}
 }
 
+@RequestMapping (value = "/adminhome" , method = RequestMethod.GET)
+public String getAdminHome() {
+	return "adminhome";
+}
+
 @RequestMapping (value ="/addoperator", method = RequestMethod.GET)
-public String ShowFormOperator (Model model) {
+public String ShowFormOperator (Model model, @RequestParam(value="nationalNo", required=false, defaultValue= "0")int nationalNo) {
 	List<FuelStation> stations = stationRepo.findAll();
 	model.addAttribute("stations", stations);
+	List<Operator> allOperators = operatorRepo.findAll();
+	model.addAttribute("allOperators", allOperators);
+	
+	Operator operator = operatorRepo.findById(Integer.toString(nationalNo)).orElse(new Operator());
+	model.addAttribute("operator", operator);
 	return "addoperator";
 }
 
 @RequestMapping (value="/addoperator" , method = RequestMethod.POST)
 public String addOperator(Operator operator) {
 	if(adminServices.addOperator(operator))	{
-		return "success";
+		return "redirect:/addoperator";
 	}
 	return "error";
+}
+
+@RequestMapping (value="/deloperator", method = RequestMethod.GET , params= {"nationalNo"})
+public String delOperator(Model model, @RequestParam(value="nationalNo", required=false, defaultValue= "0")int nationalNo) {
+	operatorRepo.deleteById(Integer.toString(nationalNo));
+	return "redirect:/addoperator"; 
 }
  
 @RequestMapping (value="/addstation" , method = RequestMethod.GET)

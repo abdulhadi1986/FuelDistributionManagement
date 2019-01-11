@@ -1,7 +1,5 @@
 package com.abulzahab.FuelDistributionManagement;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,8 +173,7 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 
 @RequestMapping (value = "/adminhome" , method = RequestMethod.GET)
 public String getAdminHome(Model model) {
-	Path currentPath = Paths.get(".");
-	model.addAttribute("path", currentPath);
+	
 	return "adminhome";
 }
 
@@ -210,6 +207,9 @@ public String delOperator(Model model, @RequestParam(value="nationalNo", require
 public String getManageStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
 	List<FuelStation> allStations = stationRepo.findAll();
 	model.addAttribute("allStations", allStations);
+	//return again list of available addresses 
+	List<Address> addresses = addressRepo.findAll();
+	model.addAttribute("addresses", addresses);
 	FuelStation fuelStation;
 	if (stationId != 0) {
 		fuelStation = stationRepo.findById(stationId).orElse(new FuelStation());
@@ -241,12 +241,21 @@ public String getAdminReports(Model model) {
 	for (FuelStation fuelStation : allStations) {
 		allStationsMap.put(fuelStation, requestRepo.findByFuelStation(fuelStation));
 	}
-	
-	for (FuelStation fuelStation : allStationsMap.keySet()) {
-		
-	}
+	model.addAttribute("allStations", allStations);
 	model.addAttribute("allStationsMap", allStationsMap);
-	return "collapsesample"; 
+	return "adminreports"; 
+}
+
+@RequestMapping (value="/filterreport", method= RequestMethod.GET)
+public String getAdminFilteredReports(Model model 
+									,@RequestParam(value="fuelStationId", required = false, defaultValue="0")int fuelStationId
+									,@RequestParam(value="dateFrom", required = false, defaultValue="")String dateFrom
+									,@RequestParam(value="dateTo", required = false, defaultValue="")int dateTo) {
+	
+	
+
+	
+	return "adminreports";
 }
 
 }//main

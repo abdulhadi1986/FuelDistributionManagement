@@ -40,7 +40,7 @@
 	</nav>
 <br/>
 
-	<form action="#" th:action="@{/submitrequest}" name = "fuelRequest" method="post">
+	<form action="#" th:action="@{/filterreport}" method="get">
 		<div class="form-col col-md-10">
 	<!--         <h2 class="mt-4" th:text="Welcome ${user.firstName} +' '+${user.lastname}">Welcome </h2> -->
 			<p class="text-secondary">Here you can generate sales reports filtered or grouped by stations and/or dates</p>
@@ -53,9 +53,9 @@
 						<div class="col-md-8 themed-grid-col">
 							<div class="form-group">
 							  <label for="inputFuelStation"> Select Station </label>
-								<select class="form-control" name="fuelStation" required>
+								<select class="form-control" name="fuelStationId">
 								  <option value="0">All Stations</option>
-								  <option th:each="station : ${stations}" th:value="${station.stationId}" th:text="${station.stationName}"></option>
+								  <option th:each="station : ${allStations}" th:value="${station.stationId}" th:text="${station.stationName}"></option>
 								</select>
 							</div>
 							<div class="form-group">
@@ -84,12 +84,29 @@
 							</ul> -->
 					</div>
 					<div>
-						<p class="text-info"> </p>
-						<ul class="list-group list-group list-group-flush" th:each="fuelRequest : ${fuelRequests}">
-							<li class="list-group-item">
-								<div th:text="${fuelRequest}"></div>
-							</li>
-						</ul>
+                        <h5 class="text-info"> Click on each station to dispaly its requests:</h5>
+                        <div class="accordion" id="accordionExample">
+                            <div th:each="fuelStation : ${allStationsMap.keySet()}"> 
+                                <div class="card">
+                                    <div class="card-header" id="headingOne">
+                                      <h2 class="mb-0">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                          <p th:text="${fuelStation}"> </p>
+                                        </button>
+                                      </h2>
+                                    </div>
+                    
+                                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                        <div th:each="fuelRequest : ${allStationsMap.get(fuelStation)}">
+                                            <div class="card-body">
+                                                <p th:text="${fuelRequest}"></p>
+                                            </div>
+                                        </div>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
 					</div>
 				</div>
 			</div>

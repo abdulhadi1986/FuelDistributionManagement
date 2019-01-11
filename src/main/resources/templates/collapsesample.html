@@ -38,6 +38,7 @@
 	  <a class="navbar-link text-light disabled" href="#">Sign Out</a>
 	</nav>
   <br />
+  <h5 class="text-info"> Click on each station to dispaly its requests:</h5>
 	<div class="accordion" id="accordionExample">
 		<div th:each="fuelStation : ${allStationsMap.keySet()}"> 
 			<div class="card">
@@ -49,7 +50,7 @@
 				  </h2>
 				</div>
 
-				<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+				<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
 					<div th:each="fuelRequest : ${allStationsMap.get(fuelStation)}">
 						<div class="card-body">
 							<p th:text="${fuelRequest}"></p>

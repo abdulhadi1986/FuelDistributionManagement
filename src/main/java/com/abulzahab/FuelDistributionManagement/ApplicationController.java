@@ -1,6 +1,11 @@
 package com.abulzahab.FuelDistributionManagement;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -169,7 +174,9 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 }
 
 @RequestMapping (value = "/adminhome" , method = RequestMethod.GET)
-public String getAdminHome() {
+public String getAdminHome(Model model) {
+	Path currentPath = Paths.get(".");
+	model.addAttribute("path", currentPath);
 	return "adminhome";
 }
 
@@ -229,8 +236,17 @@ public String deleteStations(Model model, @RequestParam(value="stationId", requi
 
 @RequestMapping (value="/adminreports" , method = RequestMethod.GET)
 public String getAdminReports(Model model) {
+	Map<FuelStation,List<FuelRequest>> allStationsMap = new HashMap<FuelStation, List<FuelRequest>>();
+	List<FuelStation> allStations = stationRepo.findAll();
+	for (FuelStation fuelStation : allStations) {
+		allStationsMap.put(fuelStation, requestRepo.findByFuelStation(fuelStation));
+	}
 	
-	return "adminreports"; 
+	for (FuelStation fuelStation : allStationsMap.keySet()) {
+		
+	}
+	model.addAttribute("allStationsMap", allStationsMap);
+	return "collapsesample"; 
 }
 
 }//main

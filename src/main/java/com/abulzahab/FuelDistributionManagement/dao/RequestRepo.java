@@ -17,4 +17,6 @@ public interface RequestRepo extends JpaRepository<FuelRequest, Integer> {
 	//filter between two dates and fuel station 
 	List<FuelRequest> findByFuelStationAndSubmitionDateLessThanAndSubmitionDateGreaterThan(FuelStation fuelStation , LocalDate dateTo, LocalDate dateFrom);
 	
+	List<FuelRequest> findByFuelStation(FuelStation fuelStation);
+	
 }

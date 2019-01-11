@@ -37,12 +37,13 @@
 	  <a class="navbar-link text-light disabled" href="#">Sign Out</a>
 	</nav>
 <br/>
-
+<p th:text="${path}"></p>
 <div class="container">
   <div class="row">
     <div class="col-sm">
         <div class="card" style="width: 12rem;">
-		  <img class="card-img-top" src="./admin.png" alt="Card image cap">
+        
+		  <img class="card-img-top" th:src="@{/photos/admin.png}" alt="Card image cap">
 		  <div class="card-body">
 			<a href="#" class="btn btn-info card-title">Admins</a>
 		  </div>
@@ -51,18 +52,18 @@
 	<br/>
     <div class="col-sm">
         <div class="card" style="width: 12rem;">
-		  <img class="card-img-top" src="./operator.png" alt="Card image cap">
+		  <img class="card-img-top" th:src="@{/photos/operator.png}" alt="Card image cap">
 		  <div class="card-body">
-			<a href="#" class="btn btn-info">Operators</a>
+			<a href="/addoperator" class="btn btn-info">Operators</a>
 		  </div>
 		</div>
     </div>
 	<br/>
     <div class="col-sm">
         <div class="card" style="width: 12rem;">
-		  <img class="card-img-top" src="./station.png" alt="Card image cap">
+		  <img class="card-img-top" th:src="@{/photos/station.png}" alt="Card image cap">
 		  <div class="card-body">
-			<a href="#" class="btn btn-info">Feul Stations</a>
+			<a href="/addstation" class="btn btn-info">Feul Stations</a>
 		  </div>
 		</div>      
     </div>
@@ -73,7 +74,7 @@
   <div class="row">
     <div class="col-sm">
         <div class="card" style="width: 12rem;">
-		  <img class="card-img-top" src="./vehicle.png" alt="Card image cap">
+		  <img class="card-img-top" th:src="@{/photos/vehicle.png}" alt="Card image cap">
 		  <div class="card-body">
 			<a href="#" class="btn btn-info">Vehicles</a>
 		  </div>
@@ -82,15 +83,15 @@
 	<br/>
     <div class="col-sm">
         <div class="card" style="width: 12rem;">
-		  <img class="card-img-top" src="./reports.png" alt="Card image cap">
+		  <img class="card-img-top" th:src="@{/photos/reports.png}" alt="Card image cap">
 		  <div class="card-body">
-			<a href="#" class="btn btn-info">Reports</a>
+			<a href="/adminreports" class="btn btn-info">Reports</a>
 		  </div>
 		</div>
     </div>
 	<br/>
 	<div class="col-sm">
-        <div class= style="width: 12rem;">
+        <div  style="width: 12rem;">
 		  
 		</div>
     </div>

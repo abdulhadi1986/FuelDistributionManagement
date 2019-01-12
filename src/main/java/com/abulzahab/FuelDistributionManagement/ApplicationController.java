@@ -21,13 +21,15 @@ import com.abulzahab.FuelDistributionManagement.dao.AdminRepo;
 import com.abulzahab.FuelDistributionManagement.dao.OperatorRepo;
 import com.abulzahab.FuelDistributionManagement.dao.RequestRepo;
 import com.abulzahab.FuelDistributionManagement.dao.StationRepo;
-import com.abulzahab.FuelDistributionManagement.dao.UserRepo;
+import com.abulzahab.FuelDistributionManagement.dao.CitizenRepo;
 import com.abulzahab.FuelDistributionManagement.dao.VehicleRepo;
 import com.abulzahab.FuelDistributionManagement.model.Address;
 import com.abulzahab.FuelDistributionManagement.model.Citizen;
+import com.abulzahab.FuelDistributionManagement.model.DistributionVehicle;
 import com.abulzahab.FuelDistributionManagement.model.FuelRequest;
 import com.abulzahab.FuelDistributionManagement.model.FuelStation;
 import com.abulzahab.FuelDistributionManagement.model.Operator;
+import com.abulzahab.FuelDistributionManagement.model.User;
 import com.abulzahab.FuelDistributionManagement.services.AdminServices;
 import com.abulzahab.FuelDistributionManagement.services.CitizenServices;
 import com.abulzahab.FuelDistributionManagement.services.OperationServices;
@@ -35,12 +37,12 @@ import com.abulzahab.FuelDistributionManagement.services.OperationServices;
 
 @Controller
 public class ApplicationController {
-		
-	private Citizen user = new Citizen();
-	private Operator operator = new Operator();
+	
+	private Citizen user ;
+	//java.util.Optional<User> currentUser = userRepo.findById("12345");	
 	
 	@Autowired
-	private UserRepo userRepo;
+	private CitizenRepo userRepo;
 	
 	@Autowired
 	private CitizenServices citizenService ;
@@ -156,10 +158,14 @@ public String editCitizenProfile(@ModelAttribute @Valid Citizen citizen , Errors
 @RequestMapping (value= {"/","/home"}, method = RequestMethod.GET)
 public String showCitizenHome(Model model) {
 	
+	
 	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
 	if (currentUser.isPresent()) {
 		user = currentUser.get();
 	}
+	
+	String noRequests="";
+	
 	List<FuelStation> localStation= stationRepo.findByCityAddress(user.getCityAddress());
 	List<FuelStation> stations = stationRepo.findByCityAddressCity(user.getCityAddress().getCity());
 	model.addAttribute("localStation", localStation);
@@ -167,6 +173,10 @@ public String showCitizenHome(Model model) {
 	
 	List<FuelRequest> fuelRequests = requestRepo.findBySubmittedByAndStatus(user, "pending");
 	model.addAttribute("fuelRequests", fuelRequests);
+	if (fuelRequests.size()<1)
+		noRequests = "You dont have any pending request.";
+	model.addAttribute("noRequests", noRequests);
+	model.addAttribute("pendingRequests", fuelRequests.size());
 	return "citizenhome"; 
 }
 
@@ -184,10 +194,21 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 	if (citizenService.submitFuelRequest(fuelRequest)) {
 		model.addAttribute("name", fuelRequest);
 		
-		return "success";
+		return "redirect:/home";
 	}else {
 		return "error"; 
 	}
+}
+
+@RequestMapping (value="/histroy", method = RequestMethod.GET)
+public String getUserReports(Model model) {
+	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
+	if (currentUser.isPresent()) {
+		user = currentUser.get();
+	}
+	List<FuelRequest> allFuelRequests= requestRepo.findBySubmittedBy(user);
+	model.addAttribute("allFuelRequests", allFuelRequests);
+	return "userreports";
 }
 
 @RequestMapping (value = "/adminhome" , method = RequestMethod.GET)
@@ -226,15 +247,29 @@ public String delOperator(Model model, @RequestParam(value="nationalNo", require
 public String getManageStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
 	List<FuelStation> allStations = stationRepo.findAll();
 	model.addAttribute("allStations", allStations);
-	//return again list of available addresses 
+	
 	List<Address> addresses = addressRepo.findAll();
 	model.addAttribute("addresses", addresses);
+	
 	FuelStation fuelStation;
+	List<Operator> operators=new ArrayList<Operator>();
+	List<DistributionVehicle> vehicles= new ArrayList<DistributionVehicle>(); 
 	if (stationId != 0) {
 		fuelStation = stationRepo.findById(stationId).orElse(new FuelStation());
-	} else 
-		fuelStation = new FuelStation(); 
+		operators.add(operatorRepo.findByFuelStation(fuelStation));
+		vehicles=vehicleRepo.findByFuelStation(fuelStation);
+		
+	} else { 
+		fuelStation = new FuelStation();
+	}
+	if (operators.size()<1)
+		operators=operatorRepo.findByFuelStationIsNull();
+	if (vehicles.size()<1) 
+		vehicles = vehicleRepo.findByFuelStationIsNull();
+	
 	model.addAttribute("fuelStation", fuelStation);
+	model.addAttribute("operators", operators);
+	model.addAttribute("vehicles", vehicles);
 	
 	return "addstation";
 }
@@ -242,12 +277,23 @@ public String getManageStations(Model model, @RequestParam(value="stationId", re
 @RequestMapping (value="/addstation", method= RequestMethod.POST)
 public String saveStation(FuelStation fuelStation) {
 	stationRepo.save(fuelStation);
+	List<DistributionVehicle> vehicles = fuelStation.getDistributionVehicles(); 
+	for (DistributionVehicle vehicle : vehicles) {
+		vehicle.setFuelStation(fuelStation);
+		vehicleRepo.save(vehicle);
+	}
 	return "redirect:/addstation";
 }
 
 @RequestMapping (value="/delstation" , method = RequestMethod.GET, params= {"stationId"})
 public String deleteStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
 	if (stationId != 0) {
+		
+		List<DistributionVehicle> vehicles = vehicleRepo.findByFuelStation(stationRepo.findById(stationId).get());
+		for (DistributionVehicle vehicle : vehicles) {
+			vehicle.setFuelStation(null);
+			vehicleRepo.save(vehicle);
+		}
 		stationRepo.deleteById(stationId);
 	}  
 	return "redirect:/addstation";
@@ -304,61 +350,31 @@ public String getAdminFilteredReports(Model model
 @RequestMapping (value="/operatorhome" , method = RequestMethod.GET)
 public String getOperationHomePage(Model model, @RequestParam(value="requestId" , required = false, defaultValue="0")int requestId) {
 	Operator operator = operatorRepo.findById("12344").orElse(new Operator());
-	List<FuelRequest> allFuelReuests = requestRepo.findByFuelStation(operator.getFuelStation());
+	
+	List<FuelRequest> allFuelReuests = requestRepo.findByFuelStationAndStatus(operator.getFuelStation(), "pending");
 	model.addAttribute("allFuelReuests", allFuelReuests);
 	FuelRequest fuelRequest = requestRepo.findById(requestId).orElse(new FuelRequest());
+	fuelRequest.setApprovedAmount(fuelRequest.getAmount());
 	model.addAttribute("fuelRequest", fuelRequest);
+	List<DistributionVehicle> vehicles= vehicleRepo.findByFuelStation(fuelRequest.getFuelStation());
+	model.addAttribute("vehicles", vehicles);
+	
+	Citizen submittedBy = fuelRequest.getSubmittedBy();
+	model.addAttribute("citizen", submittedBy);
 
 	return "operation";
 }
 
 @RequestMapping (value="/approverequest" , method = RequestMethod.POST)
-public String approveRequest(FuelRequest fuelRequest) {
+public String approveRequest(@Valid FuelRequest fuelRequest, Errors bindingResult) {
+	if (fuelRequest.getRequestId()==0)
+		return "redirect:/operatorhome";
+	
+	//fuelRequest.setApprovedBy(user);
+	//logedUser.setapprovedRequests
+	fuelRequest.setStatus("processed");
 	requestRepo.save(fuelRequest);
 	return "redirect:/operatorhome"; 
 }
-/*
-//operation 
-@RequestMapping (value= {"/operation"}, method = RequestMethod.GET)
-public String getOperationHomePage(Model model) {
-	java.util.Optional<Operator> currentUser = adminRepo.findById("12344");
-	if (currentUser.isPresent()) {
-		operator = currentUser.get();
-	}
-	
-	List<FuelRequest> fuelRequests = requestRepo.findByFuelStationOperatorAndStatus(operator, "pending");
-	model.addAttribute("fuelRequests", fuelRequests);
-	//model.addAttribute(status, attributeValue);
-	
-	String status = operationServices.getStationStatus(operator);
-	model.addAttribute("status",status);
-	
-	List<DistributionVehicle> vehicle = vehicleRepo.findAll();
-	model.addAttribute("vehicles", vehicle);
-	model.addAttribute("fullname", operator);
 
-	return "operation"; 
-}
-
-@RequestMapping (value= {"/addfuel"}, method = RequestMethod.POST)
-public String AddStationFuel(Model model, double amount) {
-	java.util.Optional<Operator> currentUser = adminRepo.findById("12344");
-	if (currentUser.isPresent()) {
-		operator = currentUser.get();
-	}
-	operationServices.addFuel(operator, amount);
-	return "operation"; 
-}
-
-@RequestMapping (value= {"/approverequest"}, method = RequestMethod.POST)
-public String ChangeRequest(Model model, FuelRequest fuelrequest) {
-	java.util.Optional<Operator> currentUser = adminRepo.findById("12344");
-	if (currentUser.isPresent()) {
-		operator = currentUser.get();
-	}
-	fuelrequest.setApprovedBy(operator);
-	requestRepo.save(fuelrequest);
-	return "operation"; 
-}
-*/
 }//main

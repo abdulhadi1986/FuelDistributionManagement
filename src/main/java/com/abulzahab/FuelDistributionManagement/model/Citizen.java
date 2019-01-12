@@ -1,28 +1,28 @@
 package com.abulzahab.FuelDistributionManagement.model;
 
 import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 
 @Entity
 @DiscriminatorValue(value="CITIZEN")
 public class Citizen extends User {
+	
 	private String identityNo;
 	
 	@ManyToOne
 	@JoinColumn(name="CITY_ADDRESS")
-	//@NotNull (message = "the area must be filled")
+	@NotNull (message = "the area must be filled")
 	private Address cityAddress;
 	
 	private String street;
 	private String building; 
+	
 	
 	@OneToMany(mappedBy ="submittedBy")
 	private List<FuelRequest> submittedFuelRequests;
@@ -59,6 +59,8 @@ public class Citizen extends User {
 	public void setSubmittedFuelRequests(List<FuelRequest> submittedFuelRequests) {
 		this.submittedFuelRequests = submittedFuelRequests;
 	}
+	
+	
 	@Override
 	public String toString() {
 		return "Citizen [identityNo=" + identityNo + ", getNationalNo()=" + getNationalNo() + ", getFirstName()="

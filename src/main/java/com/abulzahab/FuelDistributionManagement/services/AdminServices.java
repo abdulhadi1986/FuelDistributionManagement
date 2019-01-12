@@ -14,6 +14,7 @@ public class AdminServices {
 	
 	public boolean addOperator(Operator operator) {
 		if (!adminRepo.existsById(operator.getNationalNo())) {
+			operator.setRegisteredRole("operator");
 			adminRepo.save(operator);
 			return true;
 		}else {

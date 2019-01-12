@@ -22,12 +22,13 @@ public abstract class User {
 	private String nationalNo;
 	private String firstName;
 	private String lastName;
-	//@Email(regexp = "[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+\\.[a-zA-Z]{2,4}")
+	@Email(regexp = "[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+\\.[a-zA-Z]{2,4}")
 	private String email;
 	private String mobileNo;
 	private String userName;
 	private String password;
-		
+	public  String registeredRole;
+			
 	public String getNationalNo() {
 		return nationalNo;
 	}
@@ -73,9 +74,16 @@ public abstract class User {
 		this.password = password; 
 	}
 	
+	public String getRegisteredRole() {
+		return registeredRole;
+	}
+	public void setRegisteredRole(String registeredRole) {
+		this.registeredRole = registeredRole;
+	}
 	public String getRole() {
 		return this.getRole();
 	}
+	
 	
 
 }

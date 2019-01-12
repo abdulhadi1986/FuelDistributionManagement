@@ -66,6 +66,15 @@
 
 					<div class="form-group col-md-6">
 
+					  <label for="firstName">Station ID</label> 
+					  <input type="text" class="form-control" placeholder="ID" th:field="*{stationId}" name="stationId" readonly>
+					  
+					</div>
+				  </div>
+				  <div class="form-row">
+
+					<div class="form-group col-md-6">
+
 					  <label for="firstName">Station Name</label> 
 					  <input type="text" class="form-control" placeholder="Station Name" th:field="*{stationName}" name="stationName" required>
 					  
@@ -94,11 +103,8 @@
 						</div> 
 						<div class="form-group col-md-6">
 							<label for="identityNo">Operated By</label>
-							<select class="form-control" name="operator" th:field="*{operator}" >
-							  <option value="0">select operator</option>
-							  <option th:each="operator : ${operators}" th:value="${operator.nationalNo}" th:text="${operator.firstName+' - ' + operator.lastName}"></option>
-							</select>
-					  </div>
+							<input type="text" class="form-control" placeholder="No operator yet" th:field="*{operator}" name="operator" readonly>
+						</div>
 					</div> 
 				
 					<label for="identityNo">Choose the Distribution Vehicles</label>

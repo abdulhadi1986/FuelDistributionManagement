@@ -30,7 +30,6 @@
 	  </div>
 	   <a class="navbar-link text-light disabled" href="#">Sign Out</a>
 	</nav>
-
 	<form action="#" th:action="@{/submitrequest}" name = "fuelRequest" method="post">
 		<div class="form-col col-md-10">
 	<!--         <h2 class="mt-4" th:text="Welcome ${user.firstName} +' '+${user.lastname}">Welcome </h2> -->
@@ -39,7 +38,6 @@
 				<div class="col-md-6 themed-grid-col shadow-sm p-3 bg-light rounded">
 					<div>
 						<h3 class="mt-4"> Submit New Request</h3>
-						<p th:text="role"> </p>
 					</div>
 					<div class="row">
 						<div class="col-md-8 themed-grid-col">
@@ -88,7 +86,7 @@
 
 					</div>
 					<div>
-						<p class="text-info"> you don't have any pending requests</p>
+						<p th:text="${noRequests}"></p>
 						<ul class="list-group list-group list-group-flush" th:each="fuelRequest : ${fuelRequests}">
 							<li class="list-group-item">
 								<div th:text="${fuelRequest}"></div>

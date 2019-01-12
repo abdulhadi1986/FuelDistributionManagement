@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -20,8 +22,10 @@ public class FuelRequest {
 	
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
+	@Min(value=1)
 	private int requestId;
 	private double amount;
+	private double approvedAmount;
 	
 	@ManyToOne
 	@JoinColumn(name="FUEL_STATION_ID")
@@ -42,7 +46,10 @@ public class FuelRequest {
 	private Operator approvedBy;
 	
 	private String status;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate approvalDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate deliveryDate;
 	private String comments;
 	
 	@ManyToOne
@@ -63,6 +70,14 @@ public class FuelRequest {
 
 	public void setAmount(double amount) {
 		this.amount = amount;
+	}
+
+	public double getApprovedAmount() {
+		return approvedAmount;
+	}
+
+	public void setApprovedAmount(double approvedAmount) {
+		this.approvedAmount = approvedAmount;
 	}
 
 	public LocalDateTime getSubmitionDate() {
@@ -131,6 +146,14 @@ public class FuelRequest {
 		this.comments = comments;
 	}
 
+	public LocalDate getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(LocalDate deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
 	public DistributionVehicle getDistributionVehicle() {
 		return distributionVehicle;
 	}
@@ -141,7 +164,7 @@ public class FuelRequest {
 
 	@Override
 	public String toString() {
-		return "Submitted On: " + submitionDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " \n" +amount+" L"+ ", Station: " + fuelStation +", prefered date: " + preferedDeliveryDate;
+		return " ID: " +requestId+ " ,  "+submitionDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "  |  " +amount+" L"+ "  |  " + fuelStation.getStationName();
 	}
 	
 	

@@ -11,6 +11,7 @@ import com.abulzahab.FuelDistributionManagement.model.FuelStation;
 import com.abulzahab.FuelDistributionManagement.model.Operator;
 
 public interface RequestRepo extends JpaRepository<FuelRequest, Integer> {
+	List<FuelRequest> findBySubmittedBy(Citizen citizen);
 	List<FuelRequest> findBySubmittedByAndStatus(Citizen citizen, String status);
 	//filter between two dates 
 	List<FuelRequest> findBySubmitionDateLessThanAndSubmitionDateGreaterThan(LocalDate dateTo, LocalDate dateFrom); 
@@ -20,6 +21,7 @@ public interface RequestRepo extends JpaRepository<FuelRequest, Integer> {
 	
 	List<FuelRequest> findByFuelStation(FuelStation fuelStation);
 	
-	List<FuelRequest> findByFuelStationOperatorAndStatus(Operator operator, String status);
+	List<FuelRequest> findByFuelStationAndStatus(FuelStation fuelStation, String status);
+	
 	
 }

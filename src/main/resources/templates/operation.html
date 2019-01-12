@@ -53,52 +53,60 @@
 							  <label for="firstName">Request ID:</label> 
 							  <input type="text" class="form-control" placeholder="submitted On" th:field="*{requestId}" name="requestId" readonly>
 							  <input type="hidden" class="form-control" placeholder="submitted On" th:field="*{fuelStation}" name="fuelStation" readonly>
+							  <span class ="text-danger" th:errors="*{requestId}"></span>
 							</div>
 							<div class="form-group col-md-6">
 							 	<label for="inputAddress">Amount</label> 
-						  		<input type="text" class="form-control" placeholder="amount" th:field="*{amount}" name="amount">
+						  		<input type="text" class="form-control" placeholder="amount" th:field="*{approvedAmount}" name="amount">
 							</div>
+													 	
+						  		<input type="hidden" class="form-control" placeholder="amount" th:field="*{amount}" name="amount">
+							
 					  </div>
 					  <div class="form-row">
 
-						<div class="form-group col-md-6">
+						<div class="form-group col-md-12">
 
 						  <label for="firstName">Submitted On:</label> 
-						  <input type="text" class="form-control" placeholder="submitted On" th:field="*{submitionDate}" name="submitionDate" readonly>
+						  <input type="text" class="form-control" placeholder="submitted On" th:field="*{submitionDate}" name="submitionDate" readonly required>
 						  
 						</div>
 
 						
 					</div>
 					<div class="form-row">
-						<div class="form-group col-md-6">
+						<div class="form-group col-md-12">
 						  <label for="firstName">Submitted By:</label> 
-						  <input type="text" class="form-control" th:field="*{submittedBy}" name="submittedBy" readonly>
+						   <label th:text="${citizen}"></label> 
+<!-- 						  <input type="text" class="form-control" th:object="${citizen.getFirstName+' '+citizen.getLastName}" name="submittedBy" readonly> -->
+							<input type="hidden" class="form-control" th:object="${submittedBy}" name="submittedBy" readonly>							
 						</div>
 					</div>	
 					<div class="form-row">
-						<div class="form-group col-md-6">
+						<div class="form-group col-md-12">
 						  <label for="firstName">Prefered Delivery Date</label> 
 						  <input type="text" class="form-control" th:field="*{preferedDeliveryDate}" name="preferedDeliveryDate" readonly>
+						  <span class ="text-danger" th:errors="*{preferedDeliveryDate}"></span>
 						</div>
 					</div>
 					<div class="form-row">
-						<div class="form-group col-md-6">
+						<div class="form-group col-md-12">
 						  <label for="firstName">Notes</label> 
 						  <input type="text" class="form-control" th:field="*{comments}" name="comments" readonly>
 						  
 						</div>
 					</div>			
 					<div class="form-row">
-						<div class="form-group col-md-6">
+						<div class="form-group col-md-12">
 						  <label for="firstName">Submit On</label> 
-						  <input type="text" class="form-control" th:field="*{approvalDate}" name="approvalDate" readonly>
+						  <input type="date" class="form-control" th:field="*{approvalDate}" name="approvalDate">
+						  <span class ="text-danger" th:errors="*{approvalDate}"></span>
 						</div>
 					</div>
 					<div class="form-row">
 					<label>Choose Distribution Vehicle:</label>
 						<select class="form-control" name="distributionVehicle" required>
-						  <option value="0">select vehicle</option>
+						  
 						  <option th:each="vehicle : ${vehicles}" th:value="${vehicle.vehicleId}" th:text="${vehicle.plateNo+' - ' + vehicle.tankCapacity}"></option>
 						</select>	
 					</div>

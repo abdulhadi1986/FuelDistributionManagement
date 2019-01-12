@@ -53,6 +53,7 @@
 							  <label for="firstName">Request ID:</label> 
 							  <input type="text" class="form-control" placeholder="submitted On" th:field="*{requestId}" name="requestId" readonly>
 							  <input type="hidden" class="form-control" placeholder="submitted On" th:field="*{fuelStation}" name="fuelStation" readonly>
+							  
 							  <span class ="text-danger" th:errors="*{requestId}"></span>
 							</div>
 							<div class="form-group col-md-6">
@@ -79,7 +80,7 @@
 						  <label for="firstName">Submitted By:</label> 
 						   <label th:text="${citizen}"></label> 
 <!-- 						  <input type="text" class="form-control" th:object="${citizen.getFirstName+' '+citizen.getLastName}" name="submittedBy" readonly> -->
-							<input type="hidden" class="form-control" th:object="${submittedBy}" name="submittedBy" readonly>							
+							<input type="hidden" class="form-control" th:field="*{submittedBy}" name="submittedBy" readonly>							
 						</div>
 					</div>	
 					<div class="form-row">

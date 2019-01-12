@@ -150,6 +150,8 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 	    //check if the user already exists
 	 	if (citizenRepo.existsById(citizen.getNationalNo())) {
 	 		model.addAttribute("citizen",citizen);
+	 		List<Address> addresses = addressRepo.findAll();
+			model.addAttribute("addresses", addresses);
 	 		return "userexists";
 	 	}
 	 		
@@ -296,7 +298,8 @@ public String addOperator(Operator operator) {
 	if(adminServices.addOperator(operator))	{
 		return "redirect:/addoperator";
 	}
-	return "error";
+	
+	return "redirect:/addoperator";
 }
 
 @RequestMapping (value="/deloperator", method = RequestMethod.GET , params= {"nationalNo"})
@@ -482,9 +485,8 @@ public String getAddVehiclePage(Model model, @RequestParam(value="vehicleId", re
 		vehicle = vehicleRepo.findById(vehicleId).orElse(new 	DistributionVehicle());
 	}else {
 	vehicle = new DistributionVehicle();
-	
-	}
 	model.addAttribute("distributionVehicle", vehicle);
+	}
 	return "addvehicle";
 }
 

@@ -21,11 +21,12 @@ public class AdminServices {
 		if (!adminRepo.existsById(operator.getNationalNo())) {
 			operator.setRegisteredRole("operator");
 			adminRepo.save(operator);
-			return true;
+			
 		}else {
-			return false;
+			adminRepo.save(operator);
+			
 		}
-		
+		return true;
 	}
 	
 	public boolean addVehicle(DistributionVehicle vehicle) {

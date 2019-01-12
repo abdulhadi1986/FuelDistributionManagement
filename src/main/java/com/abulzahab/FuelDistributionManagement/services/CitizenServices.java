@@ -27,7 +27,7 @@ public class CitizenServices {
 		//for the citizen the userName and password are national no and id no.
 		citizen.setUserName(citizen.getNationalNo());
 		citizen.setPassword(citizen.getIdentityNo());
-		citizen.setRegisteredRole("citizten");
+		citizen.setRegisteredRole("citizen");
 		userRepo.save(citizen);
 		
 		return userRepo.existsById(citizen.getNationalNo());

@@ -63,5 +63,11 @@ public class DistributionVehicle {
 	public void setFuelStation(FuelStation fuelStation) {
 		this.fuelStation = fuelStation;
 	}
-
+	@Override
+	public String toString() {
+		return "ID: " + vehicleId + ", plateNo=" + plateNo + ", tank=" + tankCapacity
+				+ "L , " + fuelStation;
+	}
+	
+	
 }

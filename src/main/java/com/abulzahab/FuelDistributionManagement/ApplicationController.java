@@ -21,9 +21,11 @@ import com.abulzahab.FuelDistributionManagement.dao.AdminRepo;
 import com.abulzahab.FuelDistributionManagement.dao.OperatorRepo;
 import com.abulzahab.FuelDistributionManagement.dao.RequestRepo;
 import com.abulzahab.FuelDistributionManagement.dao.StationRepo;
+import com.abulzahab.FuelDistributionManagement.dao.UserRepo;
 import com.abulzahab.FuelDistributionManagement.dao.CitizenRepo;
 import com.abulzahab.FuelDistributionManagement.dao.VehicleRepo;
 import com.abulzahab.FuelDistributionManagement.model.Address;
+import com.abulzahab.FuelDistributionManagement.model.Admin;
 import com.abulzahab.FuelDistributionManagement.model.Citizen;
 import com.abulzahab.FuelDistributionManagement.model.DistributionVehicle;
 import com.abulzahab.FuelDistributionManagement.model.FuelRequest;
@@ -38,11 +40,12 @@ import com.abulzahab.FuelDistributionManagement.services.OperationServices;
 @Controller
 public class ApplicationController {
 	
-	private Citizen user ;
+	private User loggedUser ;
+	private String role="";
 	//java.util.Optional<User> currentUser = userRepo.findById("12345");	
 	
 	@Autowired
-	private CitizenRepo userRepo;
+	private CitizenRepo citizenRepo;
 	
 	@Autowired
 	private CitizenServices citizenService ;
@@ -71,20 +74,63 @@ public class ApplicationController {
 	@Autowired
 	private VehicleRepo vehicleRepo;
 	
+	@Autowired
+	private UserRepo userRepo;
+
+@RequestMapping (value = "/logout", method = RequestMethod.GET)
+public String logout() {
+	loggedUser = null; 
+	role = "";
+	return "login";
+}
 	
+@RequestMapping (value= "/login" , method = RequestMethod.GET)
+public String getLogin(Model model) {
+	if (loggedUser != null) {
+		return "redirect:/home";
+	}
+	model.addAttribute("errorMessage", "");
+	return "login";
+}
+
+@RequestMapping (value="/checklogin" , method= RequestMethod.POST)
+public String loginCheck(String userName, String password, Model model) {
+	if (userRepo.existsByUserNameAndPassword(userName, password)) {
+		role = userRepo.findByUserNameAndPassword(userName, password).getRegisteredRole();
+		loggedUser = userRepo.findByUserNameAndPassword(userName, password);
+		return "redirect:/home";
+	}
 	
+	model.addAttribute("errorMessage", "username and/or password are incorrect");
+	return "login";
+}
+
+@RequestMapping (value= {"/","/home"} , method= RequestMethod.GET)
+public String getHomePage(Model model) {
+	if (role.equals("citizen")) {
+		return "redirect:/citizenhome";
+	}else if (role.equals("operator")) {
+		return "redirect:/operatorhome";
+	}else if (role.equals("admin")) {
+		return "redirect:/adminhome";
+	}
+	
+	return "login";
+}
+
 	
 @RequestMapping (value ="/register", method = RequestMethod.GET)
 public String registerationForm(Model model) {
 	//get the list of available addresses
 	List<Address> addresses = addressRepo.findAll();
 	model.addAttribute("addresses", addresses);
-	
-	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
-	if (currentUser.isPresent()) {
-		user = currentUser.get();
+	Citizen citizen;
+	if(loggedUser != null) {
+		citizen = (Citizen) loggedUser;
+	}else {
+		citizen = new Citizen();
 	}
-	model.addAttribute("citizen",user);
+	model.addAttribute("citizen",citizen);
 	return "registration";
 }
 
@@ -102,7 +148,7 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 		}
 	 
 	    //check if the user already exists
-	 	if (userRepo.existsById(citizen.getNationalNo())) {
+	 	if (citizenRepo.existsById(citizen.getNationalNo())) {
 	 		model.addAttribute("citizen",citizen);
 	 		return "userexists";
 	 	}
@@ -111,9 +157,9 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 		if (citizenService.createCitizen(citizen)) {	
 				model.addAttribute("citizen", citizen);
 				if (!bindingResult.hasErrors())
-					return "success";
+					return "login";
 		}		
-	return "success";
+	return "login";
   	
 	
 }
@@ -123,12 +169,14 @@ public String getCitizenProfile(Model model) {
 	//get the list of available addresses
 	List<Address> addresses = addressRepo.findAll();
 	model.addAttribute("addresses", addresses);
+	Citizen citizen;
 	
-	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
-	if (currentUser.isPresent()) {
-		user = currentUser.get();
+	if (!role.equals("citizen")) {
+		return "login";
 	}
-	model.addAttribute("citizen",user);
+	citizen = (Citizen) loggedUser;
+
+	model.addAttribute("citizen",citizen);
 	return "profile";
 }
 
@@ -155,23 +203,23 @@ public String editCitizenProfile(@ModelAttribute @Valid Citizen citizen , Errors
 	
 }
 
-@RequestMapping (value= {"/","/home"}, method = RequestMethod.GET)
+@RequestMapping (value= "/citizenhome" , method = RequestMethod.GET)
 public String showCitizenHome(Model model) {
+	Citizen citizen;
 	
-	
-	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
-	if (currentUser.isPresent()) {
-		user = currentUser.get();
+	if (!role.equals("citizen")) {
+		return "login";
 	}
+	citizen = (Citizen) loggedUser;
 	
 	String noRequests="";
 	
-	List<FuelStation> localStation= stationRepo.findByCityAddress(user.getCityAddress());
-	List<FuelStation> stations = stationRepo.findByCityAddressCity(user.getCityAddress().getCity());
+	List<FuelStation> localStation= stationRepo.findByCityAddress(citizen.getCityAddress());
+	List<FuelStation> stations = stationRepo.findByCityAddressCity(citizen.getCityAddress().getCity());
 	model.addAttribute("localStation", localStation);
 	model.addAttribute("stations", stations);
 	
-	List<FuelRequest> fuelRequests = requestRepo.findBySubmittedByAndStatus(user, "pending");
+	List<FuelRequest> fuelRequests = requestRepo.findBySubmittedByAndStatus(citizen, "pending");
 	model.addAttribute("fuelRequests", fuelRequests);
 	if (fuelRequests.size()<1)
 		noRequests = "You dont have any pending request.";
@@ -182,14 +230,15 @@ public String showCitizenHome(Model model) {
 
 @RequestMapping (value="/submitrequest" , method = RequestMethod.POST)
 public String submitRequest(Model model, FuelRequest fuelRequest) {
+	Citizen citizen;
 	
-	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
-	if (currentUser.isPresent()) {
-		user = currentUser.get();
+	if (!role.equals("citizen")) {
+		return "login";
 	}
+	citizen = (Citizen) loggedUser;
 	
-	fuelRequest.setSubmittedBy(user);
-	userRepo.save(user);
+	fuelRequest.setSubmittedBy(citizen);
+	citizenRepo.save(citizen);
 	
 	if (citizenService.submitFuelRequest(fuelRequest)) {
 		model.addAttribute("name", fuelRequest);
@@ -202,23 +251,36 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 
 @RequestMapping (value="/histroy", method = RequestMethod.GET)
 public String getUserReports(Model model) {
-	java.util.Optional<Citizen> currentUser = userRepo.findById("12345");
-	if (currentUser.isPresent()) {
-		user = currentUser.get();
+Citizen citizen;
+	
+	if (!role.equals("citizen")) {
+		return "login";
 	}
-	List<FuelRequest> allFuelRequests= requestRepo.findBySubmittedBy(user);
+	citizen = (Citizen) loggedUser;
+	
+	List<FuelRequest> allFuelRequests= requestRepo.findBySubmittedBy(citizen);
 	model.addAttribute("allFuelRequests", allFuelRequests);
 	return "userreports";
 }
 
 @RequestMapping (value = "/adminhome" , method = RequestMethod.GET)
 public String getAdminHome(Model model) {
+	Admin admin;
 	
+	if (!role.equals("admin")) {
+		return "login";
+	}
+	admin = (Admin) loggedUser;
 	return "adminhome";
 }
 
 @RequestMapping (value ="/addoperator", method = RequestMethod.GET)
 public String ShowFormOperator (Model model, @RequestParam(value="nationalNo", required=false, defaultValue= "0")int nationalNo) {
+	Admin admin;
+	
+	if (!role.equals("admin")) {
+		return "login";
+	}
 	List<FuelStation> stations = stationRepo.findAll();
 	model.addAttribute("stations", stations);
 	List<Operator> allOperators = operatorRepo.findAll();
@@ -245,6 +307,11 @@ public String delOperator(Model model, @RequestParam(value="nationalNo", require
  
 @RequestMapping (value="/addstation" , method = RequestMethod.GET)
 public String getManageStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
+	Admin admin;
+	
+	if (!role.equals("admin")) {
+		return "login";
+	}	
 	List<FuelStation> allStations = stationRepo.findAll();
 	model.addAttribute("allStations", allStations);
 	
@@ -294,6 +361,10 @@ public String deleteStations(Model model, @RequestParam(value="stationId", requi
 			vehicle.setFuelStation(null);
 			vehicleRepo.save(vehicle);
 		}
+		Operator operator = operatorRepo.findByFuelStation(stationRepo.findById(stationId).get());
+		operator.setFuelStation(null);
+		operatorRepo.save(operator);
+		
 		stationRepo.deleteById(stationId);
 	}  
 	return "redirect:/addstation";
@@ -301,6 +372,12 @@ public String deleteStations(Model model, @RequestParam(value="stationId", requi
 
 @RequestMapping (value="/adminreports" , method = RequestMethod.GET)
 public String getAdminReports(Model model) {
+	Admin admin;
+	
+	if (!role.equals("admin")) {
+		return "login";
+	}
+	
 	Map<FuelStation,List<FuelRequest>> allStationsMap = new HashMap<FuelStation, List<FuelRequest>>();
 	List<FuelStation> allStations = stationRepo.findAll();
 	for (FuelStation fuelStation : allStations) {
@@ -316,6 +393,11 @@ public String getAdminFilteredReports(Model model
 									,@RequestParam(value="fuelStationId", required = false, defaultValue="0")int fuelStationId
 									,@RequestParam(value="dateFrom", required = false, defaultValue="1950-01-01")String dateF
 									,@RequestParam(value="dateTo", required = false, defaultValue="")String dateT) {
+	Admin admin;
+	
+	if (!role.equals("admin")) {
+		return "login";
+	}
 	Map<FuelStation,List<FuelRequest>> allStationsMap = new HashMap<FuelStation, List<FuelRequest>>();
 	List<FuelStation> allStations = new ArrayList<FuelStation>();
 	
@@ -349,8 +431,13 @@ public String getAdminFilteredReports(Model model
 
 @RequestMapping (value="/operatorhome" , method = RequestMethod.GET)
 public String getOperationHomePage(Model model, @RequestParam(value="requestId" , required = false, defaultValue="0")int requestId) {
-	Operator operator = operatorRepo.findById("12344").orElse(new Operator());
+	Operator operator;
 	
+	if (!role.equals("operator")) {
+		return "login";
+	}	
+	
+	operator = (Operator) loggedUser;
 	List<FuelRequest> allFuelReuests = requestRepo.findByFuelStationAndStatus(operator.getFuelStation(), "pending");
 	model.addAttribute("allFuelReuests", allFuelReuests);
 	FuelRequest fuelRequest = requestRepo.findById(requestId).orElse(new FuelRequest());
@@ -367,14 +454,56 @@ public String getOperationHomePage(Model model, @RequestParam(value="requestId" 
 
 @RequestMapping (value="/approverequest" , method = RequestMethod.POST)
 public String approveRequest(@Valid FuelRequest fuelRequest, Errors bindingResult) {
+	
+	Operator operator = (Operator) loggedUser;
 	if (fuelRequest.getRequestId()==0)
 		return "redirect:/operatorhome";
 	
-	//fuelRequest.setApprovedBy(user);
-	//logedUser.setapprovedRequests
+	fuelRequest.setApprovedBy(operator);
 	fuelRequest.setStatus("processed");
 	requestRepo.save(fuelRequest);
 	return "redirect:/operatorhome"; 
 }
+
+
+@RequestMapping (value ="/addvehicle", method = RequestMethod.GET)
+public String getAddVehiclePage(Model model, @RequestParam(value="vehicleId", required=false, defaultValue= "0")int vehicleId) {
+	
+	//get all available vehicles
+	List<DistributionVehicle> allvehicles = vehicleRepo.findAll();
+	model.addAttribute("allvehicles", allvehicles);
+	
+	//get the list of available stations
+	List<FuelStation> stations = stationRepo.findAll();
+	model.addAttribute("stations", stations);
+	
+	DistributionVehicle vehicle;
+	if(vehicleId!=0) {
+		vehicle = vehicleRepo.findById(vehicleId).orElse(new 	DistributionVehicle());
+	}else {
+	vehicle = new DistributionVehicle();
+	
+	}
+	model.addAttribute("distributionVehicle", vehicle);
+	return "addvehicle";
+}
+
+
+// Post add Vehicle form
+@RequestMapping (value="/addvehicle", method= RequestMethod.POST)
+public String savevehicle1(DistributionVehicle vehicle) {
+	vehicleRepo.save(vehicle);
+	return "redirect:/addvehicle";
+}
+
+@RequestMapping (value="/delvehicle" , method = RequestMethod.GET, params= {"vehicleId"})
+public String deleteVehicle(Model model, @RequestParam(value="vehicleId", required=false, defaultValue= "0")int vehicleId) {
+	if (vehicleId != 0) {
+		vehicleRepo.deleteById(vehicleId);
+	}  
+	return "redirect:/addvehicle";
+}
+
+
 
 }//main

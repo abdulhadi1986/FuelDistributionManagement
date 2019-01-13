@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymeleaf.org">
+
+<head>
+    <meta charset="ISO-8859-1" />
+    <title>Reports</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNav">
+		<ul class="navbar-nav">
+		  <li class="nav-item">
+			<a class="nav-link" href="/adminhome">Home</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/addadmin">Admins</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/addoperator">Operators</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/addstation">Stations</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="/addvehicle">Vehicles</a>
+		  </li>
+		  <li class="nav-item active">
+			<a class="nav-link active" href="/adminreports">Reports<span class="sr-only">(current)</span></a>
+		  </li>
+		</ul>
+	  </div>
+	  <a class="navbar-link text-light disabled" href="/logout">Sign Out</a>
+	</nav>
+<br/>
+
+	<form action="#" th:action="@{/filterreport}" method="get">
+		<div class="form-col col-md-10">
+	<!--         <h2 class="mt-4" th:text="Welcome ${user.firstName} +' '+${user.lastname}">Welcome </h2> -->
+			<p class="text-secondary">Here you can generate sales reports filtered or grouped by stations and/or dates</p>
+			<div class="row">
+				<div class="col-md-3 themed-grid-col shadow-sm p-3 bg-light rounded">
+					<div>
+						<h4 class="mt-4 text-info"> Generate Report for:</h4>
+					</div>
+					<div class="row">
+						<div class="col-md-8 themed-grid-col">
+							<div class="form-group">
+							  <label for="inputFuelStation"> Select Station </label>
+								<select class="form-control" name="fuelStationId">
+								  <option value="0">All Stations</option>
+								  <option th:each="station : ${allStations}" th:value="${station.stationId}" th:text="${station.stationName}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+									<label for="inputPreferredDate">From date:</label>
+									<input type="date" class="form-control" name="dateFrom"><br>
+							</div>
+							<div class="form-group">
+									<label for="inputPreferredDate">To date:</label>
+									<input type="date" class="form-control" name="dateTo"><br>
+							</div>
+							<button type="submit" class="btn btn-info">Generate</button>
+							<button type="reset" class="btn btn-secondary" value="Reset">Reset</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-8 themed-grid-col shadow-sm p-3 rounded themed-grid-col border border-top-0 border-left-3 border-bottom-0 border-right-0">
+					<div>
+					<br>
+					<br>
+						<h5 class="text-secondary"><label class="text-info">Submitted Orders:</label> 200
+							-  <label class="text-info">Processed Orders: </label> 199
+							- <label class="text-info">Total Liters: </label> 2500 L </h5>
+							<!-- 	<ul class="list-group" th:each="station : ${allstations}">
+								<li class="list-group-item"><div th:text="${specimen}"></div></li>
+							</ul> -->
+					</div>
+					<div>
+                        <h5 class="text-info"> Click on each station to dispaly its requests:</h5>
+                        <div class="accordion" id="accordionExample">
+                            <div th:each="fuelStation : ${allStationsMap.keySet()}"> 
+                                <div class="card">
+                                    <div class="card-header" id="headingOne">
+                                      <h2 class="mb-0">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                          <p th:text="${fuelStation}"> </p>
+                                        </button>
+                                      </h2>
+                                    </div>
+                    
+                                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                        <div th:each="fuelRequest : ${allStationsMap.get(fuelStation)}">
+                                            <div class="card-body">
+                                                <p th:text="${fuelRequest}"></p>
+                                            </div>
+                                        </div>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+					</div>
+				</div>
+			</div>
+		</div>
+
+	  </form>
+  
+  
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</body>
+</html>

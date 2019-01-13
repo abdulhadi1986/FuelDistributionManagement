@@ -76,15 +76,16 @@
 					<div>
 					<br>
 					<br>
-						<h5 class="text-secondary"><label class="text-info">Submitted Orders:</label> 200
-							-  <label class="text-info">Processed Orders: </label> 199
-							- <label class="text-info">Total Liters: </label> 2500 L </h5>
-							<!-- 	<ul class="list-group" th:each="station : ${allstations}">
-								<li class="list-group-item"><div th:text="${specimen}"></div></li>
-							</ul> -->
+						<div class="row">
+							<div class="text-info font-weight-bold">  Total Submitted Orders: </div>
+							<div class="font-weight-bold" th:text="'  '+${orderCount}"></div>
+							<div class="text-info font-weight-bold">,  Total Liters: </div>
+							<div class="font-weight-bold" th:text="'  '+${totalLiters}"></div>
+						</div>
 					</div>
 					<div>
-                        <h5 class="text-info"> Click on each station to dispaly its requests:</h5>
+						<small class="form-text text-muted">Here are only the stations that received orders (click to see details)</small>
+                        
                         <div class="accordion" id="accordionExample">
                             <div th:each="fuelStation : ${allStationsMap.keySet()}"> 
                                 <div class="card">

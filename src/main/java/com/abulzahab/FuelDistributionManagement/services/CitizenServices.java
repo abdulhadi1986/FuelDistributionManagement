@@ -1,5 +1,6 @@
 package com.abulzahab.FuelDistributionManagement.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class CitizenServices {
 	}
 	
 	public Boolean submitFuelRequest(FuelRequest fuelRequest) {
-		fuelRequest.setSubmitionDate(LocalDateTime.now());
+		fuelRequest.setSubmitionDate(LocalDate.now());
 		
 		fuelRequest.setStatus("pending");
 		//fuelRequest.setSubmittedBy(user);

@@ -40,7 +40,7 @@
   <br />
 	<div class="form-col col-md-10">
 		<div class="row">
-			<div class="col-md-8 themed-grid-col shadow-sm p-3 bg-light rounded">
+			<div class="col-md-8 themed-grid-col shadow-sm bg-light rounded">
 				<div>
 					<h3 class="text-info"> Registered Stations:</h3>
 					<ul class="list-group list-group-flush" >
@@ -55,6 +55,11 @@
 						</li>
 					</ul>
 				</div>
+				<label for="inputPreferredDate">Availabe stations: </label>
+				<div>
+                            
+                            <iframe src="https://www.google.com/maps/d/embed?mid=1tn_ryN1PqiQFolsXKvmD2cXn4VkKMt7H" height="480" width="500"></iframe>
+                    </div>
 			</div>
 			<div class="col-md-4 themed-grid-col shadow-sm p-3 rounded themed-grid-col border border-top-0 border-left-3 border-bottom-0 border-right-0">
 				<form action="#" th:action="@{/addstation}" name="station" th:object="${fuelStation}" method="post">
@@ -104,10 +109,12 @@
 						<div class="form-group col-md-6">
 							<label for="identityNo">Operated By</label>
 							<input type="text" class="form-control" placeholder="No operator yet" th:field="*{operator}" name="operator" readonly>
+							<small id="emailHelp" class="form-text text-muted">assign operator <a href="/addoperator"> here</a></small>
 						</div>
 					</div> 
 				
-					<label for="identityNo">Choose the Distribution Vehicles</label>
+					<label for="identityNo">Choose Distribution Vehicles</label>
+					<small id="emailHelp" class="form-text text-muted">If no vehicles available add<a href="/addvehicle"> here</a></small>
 					<div class="form-row">
 					  <div class="form-group col-md-12">
 						<select class="form-control" name="distributionVehicles" th:field="*{distributionVehicles}" multiple>

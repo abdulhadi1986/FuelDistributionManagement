@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,6 +122,7 @@ public String getHomePage(Model model) {
 	
 @RequestMapping (value ="/register", method = RequestMethod.GET)
 public String registerationForm(Model model) {
+	try {
 	//get the list of available addresses
 	List<Address> addresses = addressRepo.findAll();
 	model.addAttribute("addresses", addresses);
@@ -132,11 +134,15 @@ public String registerationForm(Model model) {
 	}
 	model.addAttribute("citizen",citizen);
 	return "registration";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/addCitizen" , method = RequestMethod.POST)
 public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
-	
+	try {
 	//if there is error in the input then return the form again but all the filled data must stay
 	if (bindingResult.hasErrors()) {
 			//return again list of available addresses 
@@ -162,12 +168,17 @@ public String addUser(@ModelAttribute @Valid Citizen citizen , Errors bindingRes
 					return "login";
 		}		
 	return "login";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
   	
 	
 }
 
 @RequestMapping (value ="/profile", method = RequestMethod.GET)
 public String getCitizenProfile(Model model) {
+	try {
 	//get the list of available addresses
 	List<Address> addresses = addressRepo.findAll();
 	model.addAttribute("addresses", addresses);
@@ -180,12 +191,17 @@ public String getCitizenProfile(Model model) {
 
 	model.addAttribute("citizen",citizen);
 	return "profile";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 
 @RequestMapping (value="/savecitizenprofile" , method = RequestMethod.POST)
 public String editCitizenProfile(@ModelAttribute @Valid Citizen citizen , Errors bindingResult, Model model) {
-		//if there is error in the input then return the form again but all the filled data must stay
+	try {	
+	//if there is error in the input then return the form again but all the filled data must stay
 		if (bindingResult.hasErrors()) {
 			//return again list of available addresses 
 			List<Address> addresses = addressRepo.findAll();
@@ -201,12 +217,16 @@ public String editCitizenProfile(@ModelAttribute @Valid Citizen citizen , Errors
 					return "redirect:/citizenhome";
 		}		
 	return "redirect:/citizenhome";
-	
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 	
 }
 
 @RequestMapping (value= "/citizenhome" , method = RequestMethod.GET)
 public String showCitizenHome(Model model) {
+	try {
 	Citizen citizen;
 	
 	if (!role.equals("citizen")) {
@@ -228,10 +248,16 @@ public String showCitizenHome(Model model) {
 	model.addAttribute("noRequests", noRequests);
 	model.addAttribute("pendingRequests", fuelRequests.size());
 	return "citizenhome"; 
+	
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/submitrequest" , method = RequestMethod.POST)
 public String submitRequest(Model model, FuelRequest fuelRequest) {
+	try {
 	Citizen citizen;
 	
 	if (!role.equals("citizen")) {
@@ -249,12 +275,17 @@ public String submitRequest(Model model, FuelRequest fuelRequest) {
 	}else {
 		return "error"; 
 	}
+	
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/histroy", method = RequestMethod.GET)
 public String getUserReports(Model model) {
-Citizen citizen;
-	
+	try {
+	Citizen citizen;
 	if (!role.equals("citizen")) {
 		return "login";
 	}
@@ -263,10 +294,16 @@ Citizen citizen;
 	List<FuelRequest> allFuelRequests= requestRepo.findBySubmittedBy(citizen);
 	model.addAttribute("allFuelRequests", allFuelRequests);
 	return "userreports";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value = "/adminhome" , method = RequestMethod.GET)
 public String getAdminHome(Model model) {
+	
+	try {
 	Admin admin;
 	
 	if (!role.equals("admin")) {
@@ -274,10 +311,15 @@ public String getAdminHome(Model model) {
 	}
 	admin = (Admin) loggedUser;
 	return "adminhome";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value ="/addoperator", method = RequestMethod.GET)
 public String ShowFormOperator (Model model, @RequestParam(value="nationalNo", required=false, defaultValue= "0")int nationalNo) {
+	try {
 	Admin admin;
 	
 	if (!role.equals("admin")) {
@@ -291,25 +333,40 @@ public String ShowFormOperator (Model model, @RequestParam(value="nationalNo", r
 	Operator operator = operatorRepo.findById(Integer.toString(nationalNo)).orElse(new Operator());
 	model.addAttribute("operator", operator);
 	return "addoperator";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/addoperator" , method = RequestMethod.POST)
 public String addOperator(Operator operator) {
+
 	if(adminServices.addOperator(operator))	{
 		return "redirect:/addoperator";
 	}
 	
 	return "redirect:/addoperator";
+	
 }
 
 @RequestMapping (value="/deloperator", method = RequestMethod.GET , params= {"nationalNo"})
 public String delOperator(Model model, @RequestParam(value="nationalNo", required=false, defaultValue= "0")int nationalNo) {
 	operatorRepo.deleteById(Integer.toString(nationalNo));
+	Optional<Operator> operator = operatorRepo.findById(Integer.toString(nationalNo));
+	FuelStation fuelStation=null;
+	if (operator != null)
+		fuelStation = stationRepo.findByOperator(operator);
+	fuelStation.setOperator(null);
+	stationRepo.save(fuelStation);
+	
 	return "redirect:/addoperator"; 
 }
  
 @RequestMapping (value="/addstation" , method = RequestMethod.GET)
 public String getManageStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
+	try {
+	
 	Admin admin;
 	
 	if (!role.equals("admin")) {
@@ -342,10 +399,15 @@ public String getManageStations(Model model, @RequestParam(value="stationId", re
 	model.addAttribute("vehicles", vehicles);
 	
 	return "addstation";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/addstation", method= RequestMethod.POST)
-public String saveStation(FuelStation fuelStation) {
+public String saveStation(FuelStation fuelStation, Model model) {
+	try {
 	stationRepo.save(fuelStation);
 	List<DistributionVehicle> vehicles = fuelStation.getDistributionVehicles(); 
 	for (DistributionVehicle vehicle : vehicles) {
@@ -353,10 +415,16 @@ public String saveStation(FuelStation fuelStation) {
 		vehicleRepo.save(vehicle);
 	}
 	return "redirect:/addstation";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/delstation" , method = RequestMethod.GET, params= {"stationId"})
 public String deleteStations(Model model, @RequestParam(value="stationId", required=false, defaultValue= "0")int stationId) {
+	try {
+	
 	if (stationId != 0) {
 		
 		List<DistributionVehicle> vehicles = vehicleRepo.findByFuelStation(stationRepo.findById(stationId).get());
@@ -371,69 +439,88 @@ public String deleteStations(Model model, @RequestParam(value="stationId", requi
 		stationRepo.deleteById(stationId);
 	}  
 	return "redirect:/addstation";
+	
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
-@RequestMapping (value="/adminreports" , method = RequestMethod.GET)
-public String getAdminReports(Model model) {
+@RequestMapping (value= {"/filterreport","/adminreports"}, method= RequestMethod.GET)
+public String getAdminFilteredReports(Model model 
+									,@RequestParam(value="fuelStationId", required = false, defaultValue="0")int fuelStationId
+									,@RequestParam(value="dateFrom", required = false, defaultValue="")String dateF
+									,@RequestParam(value="dateTo", required = false, defaultValue="")String dateT) {
+	try {
 	Admin admin;
+	int orderCount = 0;
+	int totalLiters =0;
 	
+	LocalDate dateFrom,dateTo;
+	//set the dates to filter 
+	if(dateF.equals("")) {
+		dateFrom = LocalDate.parse("1950-01-01", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	}else {
+		dateFrom = LocalDate.parse(dateF, DateTimeFormatter.ofPattern("yyyy-MM-dd")); 
+	}
+	if(dateT.equals("")) {
+		dateTo = LocalDate.now(); 
+	}else {
+		dateTo = LocalDate.parse(dateT, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	}
 	if (!role.equals("admin")) {
 		return "login";
 	}
 	
 	Map<FuelStation,List<FuelRequest>> allStationsMap = new HashMap<FuelStation, List<FuelRequest>>();
 	List<FuelStation> allStations = stationRepo.findAll();
-	for (FuelStation fuelStation : allStations) {
-		allStationsMap.put(fuelStation, requestRepo.findByFuelStation(fuelStation));
-	}
-	model.addAttribute("allStations", allStations);
-	model.addAttribute("allStationsMap", allStationsMap);
-	return "adminreports"; 
-}
-
-@RequestMapping (value="/filterreport", method= RequestMethod.GET)
-public String getAdminFilteredReports(Model model 
-									,@RequestParam(value="fuelStationId", required = false, defaultValue="0")int fuelStationId
-									,@RequestParam(value="dateFrom", required = false, defaultValue="1950-01-01")String dateF
-									,@RequestParam(value="dateTo", required = false, defaultValue="")String dateT) {
-	Admin admin;
-	
-	if (!role.equals("admin")) {
-		return "login";
-	}
-	Map<FuelStation,List<FuelRequest>> allStationsMap = new HashMap<FuelStation, List<FuelRequest>>();
-	List<FuelStation> allStations = new ArrayList<FuelStation>();
-	
-	LocalDate dateFrom , dateTo;
-	if(dateT.equals("")) {
-		dateTo = LocalDate.now(); 
-	}else {
-		dateTo = LocalDate.parse(dateT, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-	}
-	
-	dateFrom = LocalDate.parse(dateF, DateTimeFormatter.ofPattern("yyyy-MM-dd")); 
+	List<FuelStation> filteredStations = new ArrayList<FuelStation>();
 	
 		
 	if (fuelStationId !=0) {
 		FuelStation fuelStation = stationRepo.findById(fuelStationId).orElse(new FuelStation());
 		allStationsMap.put(fuelStation, requestRepo.findByFuelStation(fuelStation));
-		allStations.add(fuelStation);
+		//allStations.add(fuelStation);
 		}
 	else {
-		allStations = stationRepo.findAll();
-		for (FuelStation fuelStation : allStations) {
-			allStationsMap.put(fuelStation, requestRepo.findBySubmitionDateLessThanAndSubmitionDateGreaterThan(dateTo, dateFrom));
-		requestRepo.findBySubmitionDateLessThanAndSubmitionDateGreaterThan(dateTo, dateFrom);
+		filteredStations = allStations;
+		for (FuelStation fuelStation : filteredStations) {
+			List<FuelRequest> allFuelRequests = requestRepo.findByFuelStation(fuelStation);
+			List<FuelRequest> filteredRequests = new ArrayList<FuelRequest>();
+            if (allFuelRequests.size()>0) {
+            	for (FuelRequest request : allFuelRequests) {
+            		if (request.getSubmitionDate().isAfter(dateFrom.minusDays(1)) && request.getSubmitionDate().isBefore(dateTo.plusDays(1))) {
+            			filteredRequests.add(request);
+            			
+            		}
+            	}
+            	allStationsMap.put(fuelStation,filteredRequests);
+			    //allStationsMap.put(fuelStation, requestRepo.findByFuelStationAndSubmitionDateLessThanAndSubmitionDateGreaterThan(fuelStation,dateTo, dateFrom));
+		    }
+			
 		}
 	}
+    for (List<FuelRequest> fuelRequests : allStationsMap.values()) {
+		orderCount+= fuelRequests.size();
+		for (FuelRequest fuelRequest:fuelRequests) {
+			totalLiters+=fuelRequest.getApprovedAmount();
+		}
+	}
+	
+	model.addAttribute("orderCount", orderCount);
+	model.addAttribute("totalLiters", totalLiters);
 	
 	model.addAttribute("allStations", allStations);
 	model.addAttribute("allStationsMap", allStationsMap);
 	return "adminreports"; 
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
-
 @RequestMapping (value="/operatorhome" , method = RequestMethod.GET)
 public String getOperationHomePage(Model model, @RequestParam(value="requestId" , required = false, defaultValue="0")int requestId) {
+	try {
 	Operator operator;
 	
 	if (!role.equals("operator")) {
@@ -453,28 +540,59 @@ public String getOperationHomePage(Model model, @RequestParam(value="requestId" 
 	model.addAttribute("citizen", submittedBy);
 
 	return "operation";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/approverequest" , method = RequestMethod.POST)
-public String approveRequest(@Valid FuelRequest fuelRequest, Errors bindingResult) {
-	
+public String approveRequest(@Valid FuelRequest fuelRequest, Errors bindingResult, Model model) {
+	try {
 	Operator operator = (Operator) loggedUser;
 	if (fuelRequest.getRequestId()==0)
 		return "redirect:/operatorhome";
 	
 	fuelRequest.setApprovedBy(operator);
 	fuelRequest.setStatus("processed");
+	if (fuelRequest.getDeliveryDate()== null)
+		fuelRequest.setDeliveryDate(fuelRequest.getPreferedDeliveryDate());
+	
 	requestRepo.save(fuelRequest);
 	return "redirect:/operatorhome"; 
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
+@RequestMapping (value="/operatorreports" , method = RequestMethod.GET)
+public String getOperatorReports(Model model) {
+	try {
+	Operator operator;
+	if (!role.equals("operator")) {
+		return "login";
+	}	
+	operator = (Operator) loggedUser;
+	List<FuelRequest> allFuelRequests= requestRepo.findByFuelStation(operator.getFuelStation());
+	model.addAttribute("allFuelRequests", allFuelRequests);
+
+	return "operatorreports";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
+}
 
 @RequestMapping (value ="/addvehicle", method = RequestMethod.GET)
 public String getAddVehiclePage(Model model, @RequestParam(value="vehicleId", required=false, defaultValue= "0")int vehicleId) {
-	
+	try {
 	//get all available vehicles
-	List<DistributionVehicle> allvehicles = vehicleRepo.findAll();
+	List<DistributionVehicle> allvehicles = vehicleRepo.findByFuelStationNotNull();
 	model.addAttribute("allvehicles", allvehicles);
+	List<DistributionVehicle> unAssvehicles = vehicleRepo.findByFuelStationIsNull();
+	model.addAttribute("unAssvehicles", unAssvehicles);
+	
 	
 	//get the list of available stations
 	List<FuelStation> stations = stationRepo.findAll();
@@ -485,25 +603,40 @@ public String getAddVehiclePage(Model model, @RequestParam(value="vehicleId", re
 		vehicle = vehicleRepo.findById(vehicleId).orElse(new 	DistributionVehicle());
 	}else {
 	vehicle = new DistributionVehicle();
-	model.addAttribute("distributionVehicle", vehicle);
+	
 	}
+	model.addAttribute("distributionVehicle", vehicle);
 	return "addvehicle";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 
 // Post add Vehicle form
 @RequestMapping (value="/addvehicle", method= RequestMethod.POST)
-public String savevehicle1(DistributionVehicle vehicle) {
+public String savevehicle1(DistributionVehicle vehicle, Model model) {
+	try {
 	vehicleRepo.save(vehicle);
 	return "redirect:/addvehicle";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/delvehicle" , method = RequestMethod.GET, params= {"vehicleId"})
 public String deleteVehicle(Model model, @RequestParam(value="vehicleId", required=false, defaultValue= "0")int vehicleId) {
+	try {
 	if (vehicleId != 0) {
 		vehicleRepo.deleteById(vehicleId);
 	}  
 	return "redirect:/addvehicle";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 
@@ -526,18 +659,28 @@ public String ShowFormAdmin (Model model, @RequestParam(value="nationalNo", requ
 }
 
 @RequestMapping (value="/addadmin" , method = RequestMethod.POST)
-public String addAdmin(Admin admin) {
+public String addAdmin(Admin admin, Model model) {
+	try {
 	if(adminServices.addAdmin(admin))	{
 		return "redirect:/addadmin";
 	}
 	
 	return "redirect:/addadmin";
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 @RequestMapping (value="/deladmin", method = RequestMethod.GET , params= {"nationalNo"})
 public String delAdmin(Model model, @RequestParam(value="nationalNo", required=false, defaultValue= "0")int nationalNo) {
+	try {
 	adminRepo.deleteById(Integer.toString(nationalNo));
 	return "redirect:/addadmin"; 
+	}catch(Exception e) {
+		model.addAttribute("errorMessage", e.getMessage());
+		return "error";
+	}
 }
 
 

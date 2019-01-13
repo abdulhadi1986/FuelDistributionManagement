@@ -10,5 +10,6 @@ import com.abulzahab.FuelDistributionManagement.model.FuelStation;
 public interface VehicleRepo extends JpaRepository<DistributionVehicle, Integer> {
 	List<DistributionVehicle> findByFuelStation(FuelStation fuelStation);
 	List<DistributionVehicle> findByFuelStationIsNull();
+	List<DistributionVehicle> findByFuelStationNotNull();
 
 }

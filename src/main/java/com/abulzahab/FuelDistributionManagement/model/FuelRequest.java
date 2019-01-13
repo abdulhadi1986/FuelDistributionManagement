@@ -31,7 +31,7 @@ public class FuelRequest {
 	@JoinColumn(name="FUEL_STATION_ID")
 	private FuelStation fuelStation;
 	
-	private LocalDateTime submitionDate ;
+	private LocalDate submitionDate ;
 	
 	//this is the date format on the web page
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -80,11 +80,11 @@ public class FuelRequest {
 		this.approvedAmount = approvedAmount;
 	}
 
-	public LocalDateTime getSubmitionDate() {
+	public LocalDate getSubmitionDate() {
 		return submitionDate;
 	}
 
-	public void setSubmitionDate(LocalDateTime submitionDate) {
+	public void setSubmitionDate(LocalDate submitionDate) {
 		this.submitionDate = submitionDate;
 	}
 
@@ -164,7 +164,7 @@ public class FuelRequest {
 
 	@Override
 	public String toString() {
-		return " ID: " +requestId+ " ,  "+submitionDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "  |  " +amount+" L"+ "  |  " + fuelStation.getStationName();
+		return " ID: " +requestId+ " ,  submitted On :"+submitionDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "  |  " +amount+" L"+ "  |  " + fuelStation.getStationName();
 	}
 	
 	

@@ -38,79 +38,130 @@
 	  <a class="navbar-link text-light disabled" href="/logout">Sign Out</a>
 	</nav>
   <br />
-	<div class="form-col col-md-10">
-		<div class="row">
-			<div class="col-md-8 themed-grid-col shadow-sm p-3 bg-light rounded">
-				<div>
-					<h3 class="text-info"> Registered Vehicles:</h3>
-					<ul class="list-group list-group-flush" >
-						<li class="list-group" th:each="vehicle : ${allvehicles}">
-							<div class="row border border-top-0 border-left-0 border-bottom-3 border-right-0">
-								<div class="col-md-8 " th:text="${vehicle}"></div>
-								<div class="col-md-3"> <a class="text-success" th:href="@{/addvehicle(vehicleId=${vehicle.vehicleId})}">Edit</a> 
-								- <a class="text-danger" th:href="@{/delvehicle(vehicleId=${vehicle.vehicleId})}">Del</a> </div>
-							<br/>	
-							</div>
-							
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="col-md-4 themed-grid-col shadow-sm p-3 rounded themed-grid-col border border-top-0 border-left-3 border-bottom-0 border-right-0">
-				<form action="#" th:action="@{/addvehicle}" name="vehicle" th:object="${distributionVehicle}" method="post">
-				<div class="form-col">
-				  <div class="shadow-sm p-3 mb-5 bg-white rounded">
-					<h3 class="text-info">Add/Edit Vehicle</h3>
-				  </div>
-				 <div class="form-row">
+  <div class="form-col col-md-10">
+    <div class="row">
+        <div class="col-md-8 themed-grid-col shadow-sm p-3 bg-light rounded">
+            
+            <div class="accordion" id="accordionExample">
+                <div > 
+                    <div class="card">
+                        <div class="row">
+                                <div class="card-header" id="headingTwo">
+                                        <h3 class="mb-0 text-info">
+                                          <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
+                                            <p><u>Vehicles Not assigned to a station</u></p>
+                                          </button>
+                                        </h3>
+                                </div>    
+                                
+                                <div class="card-header" id="headingOne">
+                                        <h3 class="mb-0 text-info">
+                                          <button class="btn btn-outline-info" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            <p ><u>Assigend Vehicles</u></p>
+                                          </button>
+                                        </h3>
+                                </div>
+                                
+                        </div>
+                        
+        
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div th:each="vehicle : ${allvehicles}">
+                                <div class="card-body">
+                                    
+                                        
+                                            <div class="row border border-top-0 border-left-0 border-bottom-3 border-right-0">
+                                                <div class="col-md-8 " th:text="${vehicle}"></div>
+                                                <div class="col-md-3"> <a class="text-success" th:href="@{/addvehicle(vehicleId=${vehicle.vehicleId})}">Edit</a> 
+                                                - <a class="text-danger" th:href="@{/delvehicle(vehicleId=${vehicle.vehicleId})}">Del</a> </div>
+                                            <br/>	
+                                            </div>
+                                            
+                                
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                                
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                            <div th:each="vehicle : ${unAssvehicles}">
+                                <div class="card-body">
+                                    
+                                        
+                                            <div class="row border border-top-0 border-left-0 border-bottom-3 border-right-0">
+                                                <div class="col-md-8 " th:text="${vehicle}"></div>
+                                                <div class="col-md-3"> <a class="text-success" th:href="@{/addvehicle(vehicleId=${vehicle.vehicleId})}">Edit</a> 
+                                                - <a class="text-danger" th:href="@{/delvehicle(vehicleId=${vehicle.vehicleId})}">Del</a> </div>
+                                            <br/>	
+                                            </div>
+                                            
+                                
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-					<div class="form-group col-md-6">
-						<input type="hidden" th:field="*{vehicleId}" name="vehicleId">
-					    <label for="firstName">plate No</label> 
-						<input type="text" class="form-control" placeholder="Plate Number" th:field="*{plateNo}" name="plateNo" required>
-					  
-					</div>
 
-					<div class="form-group col-md-6">
-					
-					  <label for="inputAddress">Tank Capacity</label> 
-					  <input type="text" class="form-control" placeholder="tankCapacity" th:field="*{tankCapacity}" name="tankCapacity" required>
-						
-					</div>
-				</div>
-				
-				
-				<div class="form-row">
-					<div class="form-group col-md-6">
-				
-					<label for="nationalNo">Driver Name</label> 
-					<input type="text" class="form-control" th:field="*{driverName}" name="driverName" placeholder="driver Name" required>
-				
-					</div>
-					<div class="form-group col-md-6">
-					    <label for="identityNo">Driver Mobile Number</label> 
-						<input type="text" class="form-control" th:field="*{driverMobileNo}" name="driverMobileNo" placeholder="Driver Mob Number" required> 
-					</div>
-				</div>	
-				<label for="identityNo">Assign to Station</label>
-				<div class="form-row">				
-					<div class="form-row">
-					  <div class="form-group col-md-12">
-						<select class="form-control" name="fuelStation" th:field="*{fuelStation}">
-						  <option th:each="station : ${stations}" th:value="${station.stationId}" th:text="${station.stationName}"></option>
-						</select>
-						<small id="emailHelp" class="form-text text-muted">Please choose the Fuel Station</small>
-					  </div>
-					</div>
-				  </div>
-				 </div>
-				  	<button type="submit" class="btn btn-info">Save</button>
-					<button type="reset" class="btn btn-secondary">Reset</button>
-				</form>
-		   </div>
-		</div>
-	</div>
-    
+        <div class="col-md-4 themed-grid-col shadow-sm p-3 rounded themed-grid-col border border-top-0 border-left-3 border-bottom-0 border-right-0">
+            <form action="#" th:action="@{/addvehicle}" name="vehicle" th:object="${distributionVehicle}" method="post">
+            <div class="form-col">
+              <div class="shadow-sm p-3 mb-5 bg-white rounded">
+                <h3 class="text-info">Add/Edit Vehicle</h3>
+              </div>
+             <div class="form-row">
+
+                <div class="form-group col-md-6">
+                    <input type="hidden" th:field="*{vehicleId}" name="vehicleId">
+                    <label for="firstName">plate No</label> 
+                    <input type="text" class="form-control" placeholder="Plate Number" th:field="*{plateNo}" name="plateNo" required>
+                  
+                </div>
+
+                <div class="form-group col-md-6">
+                
+                  <label for="inputAddress">Tank Capacity</label> 
+                  <input type="text" class="form-control" placeholder="tankCapacity" th:field="*{tankCapacity}" name="tankCapacity" required>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="form-row">
+                <div class="form-group col-md-6">
+            
+                <label for="nationalNo">Driver Name</label> 
+                <input type="text" class="form-control" th:field="*{driverName}" name="driverName" placeholder="driver Name" required>
+            
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="identityNo">Driver Mobile Number</label> 
+                    <input type="text" class="form-control" th:field="*{driverMobileNo}" name="driverMobileNo" placeholder="Driver Mob Number" required> 
+                </div>
+            </div>	
+            <label for="identityNo">Assign to Station</label>
+            <div class="form-row">				
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    <select class="form-control" name="fuelStation" th:field="*{fuelStation}">
+                      <option th:each="station : ${stations}" th:value="${station.stationId}" th:text="${station.stationName}"></option>
+                    </select>
+                    <small id="emailHelp" class="form-text text-muted">Please choose the Fuel Station</small>
+                  </div>
+                </div>
+              </div>
+             </div>
+                  <button type="submit" class="btn btn-info">Save</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+            </form>
+       </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>  	

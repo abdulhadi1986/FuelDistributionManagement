@@ -66,7 +66,7 @@ public class DistributionVehicle {
 	@Override
 	public String toString() {
 		return "ID: " + vehicleId + ", plateNo=" + plateNo + ", tank=" + tankCapacity
-				+ "L , " + fuelStation;
+				+ "L , " + fuelStation+ ", contact: "+ driverMobileNo;
 	}
 	
 	

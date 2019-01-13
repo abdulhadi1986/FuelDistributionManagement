@@ -46,7 +46,7 @@ public class Address {
 	
 	@Override
 	public String toString() {
-		return "City: " + city + " -  Area: " + area + "";
+		return "City: " + city + "  , Area: " + area + "";
 	}
 
 }

@@ -12,5 +12,4 @@ public class Admin extends User{
 		return "Admin: " + getFirstName() + " " + getLastName() + "";
 	}
 	
-	
 }

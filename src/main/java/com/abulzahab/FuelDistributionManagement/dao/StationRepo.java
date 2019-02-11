@@ -12,7 +12,7 @@ import com.abulzahab.FuelDistributionManagement.model.Operator;
 public interface StationRepo extends JpaRepository<FuelStation, Integer> {
 	List<FuelStation> findByCityAddress(Address address);
 	List<FuelStation> findByCityAddressCity (String city);
-	FuelStation findByOperator(Optional<Operator> operator);
+	List<FuelStation> findByOperator(Optional<Operator> operator);
 	FuelStation findByOperator(Operator operator);
 	
 	

@@ -354,11 +354,13 @@ public String addOperator(Operator operator) {
 public String delOperator(Model model, @RequestParam(value="nationalNo", required=false, defaultValue= "0")int nationalNo) {
 	operatorRepo.deleteById(Integer.toString(nationalNo));
 	Optional<Operator> operator = operatorRepo.findById(Integer.toString(nationalNo));
-	FuelStation fuelStation=null;
+	List<FuelStation> fuelStation=null;
 	if (operator != null)
 		fuelStation = stationRepo.findByOperator(operator);
-	fuelStation.setOperator(null);
-	stationRepo.save(fuelStation);
+	for (FuelStation station : fuelStation) {
+		station.setOperator(null);
+		stationRepo.save(station);
+	}
 	
 	return "redirect:/addoperator"; 
 }
